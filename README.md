@@ -8,7 +8,7 @@ another, see where relatives live, and share contact details they choose to shar
 | Milestone | State |
 |---|---|
 | M1 Foundation: database, permissions, tests | done (live in Supabase, 47 tests) |
-| M2 Sign-in and enrollment | not started |
+| M2 Sign-in and enrollment | in progress (works on this Mac; needs a domain to email relatives) |
 | M3 Import the 8 Airtable profiles | not started |
 | M4 Directory | not started |
 | M5 Profiles and children | not started |
