@@ -690,11 +690,11 @@ export type Database = {
         }[]
       }
       ensure_hobby: { Args: { p_name: string }; Returns: string }
-      invitation_preview: { Args: { p_secret: string }; Returns: Json }
       grant_guardian: {
         Args: { p_account_id: string; p_profile_id: string; p_via: string }
         Returns: undefined
       }
+      invitation_preview: { Args: { p_secret: string }; Returns: Json }
       is_active_member: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_guardian_of: { Args: { p_profile_id: string }; Returns: boolean }
