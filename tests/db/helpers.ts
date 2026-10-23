@@ -91,6 +91,29 @@ export class TestDb {
     return id;
   }
 
+  /**
+   * What Supabase does when someone new requests a sign-in code: creates the
+   * sign-in user (with whatever invitation they carried), which starts as a
+   * pending account. Runs as system.
+   */
+  async signUp(opts: { invitation?: string; confirmed?: boolean } = {}): Promise<string> {
+    await this.asSystem();
+    return this.value<string>(
+      "insert into auth.users (raw_user_meta_data, email_confirmed_at) values ($1, $2) returning id",
+      [opts.invitation ? { invitation: opts.invitation } : {}, opts.confirmed === false ? null : new Date()],
+    );
+  }
+
+  /** Calls the sign-up gate the way Supabase's sign-in service does. */
+  async signUpGate(invitation?: string): Promise<{ error?: { message: string } }> {
+    await this.db.exec("reset role");
+    await this.db.exec("set role supabase_auth_admin");
+    const event = { user: { email: "new@example.test", user_metadata: invitation ? { invitation } : {} } };
+    const result = await this.value<{ error?: { message: string } }>("select private.before_user_created($1)", [event]);
+    await this.db.exec("reset role");
+    return result;
+  }
+
   /** Creates a profile directly. Runs as system. */
   async profile(fields: Row = {}): Promise<string> {
     await this.asSystem();

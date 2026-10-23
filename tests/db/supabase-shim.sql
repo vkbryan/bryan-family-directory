@@ -5,6 +5,7 @@
 create role anon nologin;
 create role authenticated nologin;
 create role service_role nologin bypassrls;
+create role supabase_auth_admin nologin;
 
 create schema auth;
 grant usage on schema auth to anon, authenticated, service_role;
@@ -12,8 +13,10 @@ grant usage on schema public to anon, authenticated, service_role;
 
 create table auth.users (
   id         uuid primary key default gen_random_uuid(),
-  email      text unique,
-  created_at timestamptz not null default now()
+  email              text unique,
+  email_confirmed_at timestamptz,
+  raw_user_meta_data jsonb not null default '{}'::jsonb,
+  created_at         timestamptz not null default now()
 );
 
 create function auth.uid()
