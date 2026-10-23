@@ -7,7 +7,7 @@ another, see where relatives live, and share contact details they choose to shar
 
 | Milestone | State |
 |---|---|
-| M1 Foundation: database, permissions, tests | in progress |
+| M1 Foundation: database, permissions, tests | done (live in Supabase, 47 tests) |
 | M2 Sign-in and enrollment | not started |
 | M3 Import the 8 Airtable profiles | not started |
 | M4 Directory | not started |
@@ -53,6 +53,26 @@ Starts the website on your computer at http://localhost:3000.
 npm run typecheck
 ```
 Checks the code for type mistakes.
+
+## Changing the live database
+
+Database changes are new files in `supabase/migrations/`. To apply one:
+
+1. Run `npm test`. All tests must pass.
+2. Preview it. This changes nothing:
+   ```bash
+   npx supabase db push --linked --dry-run
+   ```
+3. Apply it, once the preview shows only the expected file:
+   ```bash
+   npx supabase db push --linked
+   ```
+4. Run Supabase's security checker:
+   ```bash
+   npx supabase db advisors --linked --type security
+   ```
+   Expect only the "Signed-In Users Can Execute SECURITY DEFINER Function"
+   warnings for the intended member actions.
 
 ## Folder guide
 
