@@ -76,7 +76,7 @@ describe("parents add children", () => {
     const db = await freshDb();
     const { childId } = await parentWithChild(db);
     await db.run("update public.profiles set city = 'Atlanta', photo_path = 'kid.jpg' where id = $1", [childId]);
-    const sql = "select full_name, photo_path, city, birth_year, birth_month from public.directory_profiles where id = $1";
+    const sql = "select full_name, photo_path, city, birth_year, birth_month from public.directory_profiles() where id = $1";
 
     const guardianView = await db.one(sql, [childId]);
     expect(guardianView).toMatchObject({ city: "Atlanta", birth_year: thisYear - 4, birth_month: 6 });

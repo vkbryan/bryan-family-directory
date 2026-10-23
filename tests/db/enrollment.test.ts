@@ -82,7 +82,7 @@ describe("claiming an existing profile", () => {
     const relative = await db.account();
     await db.as(relative);
     await db.value("select public.accept_invitation($1)", [secret]);
-    expect(await db.value("select public.my_profile_id()")).toBe(unclaimed);
+    expect(await db.value("select (select id from public.directory_profiles() where is_me)")).toBe(unclaimed);
     expect(await db.run("update public.profiles set city = 'Reno' where id = $1", [unclaimed])).toBe(1);
 
     await db.as(admin.accountId);
@@ -129,7 +129,7 @@ describe("claiming an existing profile", () => {
 
     await db.as(claimant);
     const requestId = await db.value<string>("select public.request_profile_claim($1, 'This is me')", [unclaimed]);
-    expect(await db.value("select public.my_profile_id()")).toBeNull();
+    expect(await db.value("select (select id from public.directory_profiles() where is_me)")).toBeNull();
 
     await db.as(member.accountId);
     await expect(db.value("select public.decide_profile_request($1, true)", [requestId])).rejects.toThrow(/not_allowed/);
@@ -137,6 +137,6 @@ describe("claiming an existing profile", () => {
     await db.as(admin.accountId);
     await db.value("select public.decide_profile_request($1, true)", [requestId]);
     await db.as(claimant);
-    expect(await db.value("select public.my_profile_id()")).toBe(unclaimed);
+    expect(await db.value("select (select id from public.directory_profiles() where is_me)")).toBe(unclaimed);
   });
 });

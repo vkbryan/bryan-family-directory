@@ -6,9 +6,24 @@ describe("signed-out visitors and deactivated accounts", () => {
     const db = await freshDb();
     await db.member("Pat Example");
     await db.asAnon();
-    await expect(db.rows("select * from public.directory_profiles")).rejects.toThrow(/permission denied/);
+    await expect(db.rows("select * from public.directory_profiles()")).rejects.toThrow(/permission denied/);
     await expect(db.rows("select * from public.profiles")).rejects.toThrow(/permission denied/);
     await expect(db.rows("select * from public.family_branches")).rejects.toThrow(/permission denied/);
+  });
+
+  test("internal permission helpers cannot be called directly by signed-in users", async () => {
+    const db = await freshDb();
+    const pat = await db.member("Pat Example");
+    await db.as(pat.accountId);
+    for (const helper of [
+      "public.is_active_member()",
+      "public.is_admin()",
+      `public.is_guardian_of('${pat.profileId}')`,
+      `public.can_edit_profile('${pat.profileId}')`,
+      "public.my_profile_id()",
+    ]) {
+      await expect(db.value(`select ${helper}`)).rejects.toThrow(/permission denied/);
+    }
   });
 
   test("a deactivated member sees an empty directory and cannot edit, even their own profile", async () => {
@@ -16,7 +31,7 @@ describe("signed-out visitors and deactivated accounts", () => {
     await db.member("Pat Example");
     const gone = await db.member("Dana Gone", { deactivated: true });
     await db.as(gone.accountId);
-    expect(await db.rows("select * from public.directory_profiles")).toHaveLength(0);
+    expect(await db.rows("select * from public.directory_profiles()")).toHaveLength(0);
     expect(await db.run("update public.profiles set city = 'Reno' where id = $1", [gone.profileId])).toBe(0);
     await expect(db.value("select public.create_my_profile('Someone')")).rejects.toThrow(/not_signed_in/);
   });
@@ -69,7 +84,7 @@ describe("adults and their own profiles", () => {
       branch,
     ]);
     const mine = await db.one<{ is_me: boolean; can_edit: boolean }>(
-      "select is_me, can_edit from public.directory_profiles where id = $1",
+      "select is_me, can_edit from public.directory_profiles() where id = $1",
       [id],
     );
     expect(mine).toEqual({ is_me: true, can_edit: true });
@@ -104,7 +119,7 @@ describe("the directory view respects privacy settings", () => {
       birth_year_visibility: "private",
     });
     const sql =
-      "select city, contact_email, phone, birth_year, birth_month, birth_day from public.directory_profiles where id = $1";
+      "select city, contact_email, phone, birth_year, birth_month, birth_day from public.directory_profiles() where id = $1";
 
     await db.as(viewer.accountId);
     expect(await db.one(sql, [owner])).toEqual({
@@ -125,7 +140,7 @@ describe("the directory view respects privacy settings", () => {
     const viewer = await db.member("Viewer Example");
     await db.profile({ full_name: "Archived Example", archived_at: new Date() });
     await db.as(viewer.accountId);
-    expect(await db.rows("select full_name from public.directory_profiles")).toEqual([{ full_name: "Viewer Example" }]);
+    expect(await db.rows("select full_name from public.directory_profiles()")).toEqual([{ full_name: "Viewer Example" }]);
   });
 
   test("birthdays must be real dates", async () => {

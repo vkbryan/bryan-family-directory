@@ -23,7 +23,7 @@ describe("admin powers", () => {
     await db.as(admin.accountId);
     await db.value("select public.admin_set_account_status($1, 'deactivated')", [member.accountId]);
     await db.as(member.accountId);
-    expect(await db.rows("select * from public.directory_profiles")).toHaveLength(0);
+    expect(await db.rows("select * from public.directory_profiles()")).toHaveLength(0);
   });
 
   test("the last admin cannot be deactivated or demoted", async () => {
@@ -45,7 +45,7 @@ describe("admin powers", () => {
     await db.as(admin.accountId);
     await db.value("select public.admin_unlink_profile($1)", [member.profileId]);
     await db.as(member.accountId);
-    expect(await db.value("select public.my_profile_id()")).toBeNull();
+    expect(await db.value("select (select id from public.directory_profiles() where is_me)")).toBeNull();
   });
 });
 

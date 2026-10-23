@@ -1,6 +1,6 @@
 # Data model and permissions
 
-Schema: [`supabase/migrations/20261021000001_foundation.sql`](../supabase/migrations/20261021000001_foundation.sql).
+Schema: [`supabase/migrations/`](../supabase/migrations/), applied in filename order.
 Tests: [`tests/db/`](../tests/db/).
 
 ## Three questions, three places
@@ -26,11 +26,17 @@ tags), `invitations`, `profile_requests`, `audit_log`, `app_settings`.
 
 Every policy on profiles, branches and hobbies uses this one function.
 
+The permission helpers (`can_edit_profile`, `is_admin`, `is_active_member`,
+`is_guardian_of`, `my_profile_id`) live in the `private` schema, which the
+website's API does not expose. Same-named stand-ins in `public` are used only
+inside the database's own functions; signed-in users cannot call them.
+
 ## What members can see
 
-Members never read `profiles` directly; they read the `directory_profiles` view.
-Fields the viewer may not see come back empty. Signed-out visitors and
-deactivated accounts see nothing.
+Members never read `profiles` directly; they call the `directory_profiles()`
+function (`supabase.rpc('directory_profiles')` in the app, which can still
+filter and sort). Fields the viewer may not see come back empty. Signed-out
+visitors and deactivated accounts see nothing.
 
 | Field group | Setting | Default (adult) | Default (child) |
 |---|---|---|---|
