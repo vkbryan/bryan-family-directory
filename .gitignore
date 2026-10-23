@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# family data — real family information must never be committed
+*.csv
+*.tsv
+*.xlsx
+/private-data/
+/backups/
+*.dump
+*.sql.gz
+
+# supabase local files
+/supabase/.temp/
+/supabase/.branches/
