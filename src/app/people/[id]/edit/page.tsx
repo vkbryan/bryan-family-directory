@@ -58,6 +58,7 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
 
   const profile: EditableProfile = {
     id: p.id,
+    isMe,
     isChild,
     fullName: p.full_name,
     aka: p.aka,

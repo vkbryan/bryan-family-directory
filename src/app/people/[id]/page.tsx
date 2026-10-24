@@ -150,7 +150,7 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
       )}
 
       {person.isChild && (
-        <p className="text-muted">Children&apos;s profiles never show contact details, and their birthday stays private.</p>
+        <p className="text-muted">Children&apos;s profiles never show contact details. Their birthday and location are shown only if a parent chooses to share them.</p>
       )}
 
       {person.canEdit && (

@@ -19,6 +19,7 @@ import {
 
 export type EditableProfile = {
   id: string;
+  isMe: boolean;
   isChild: boolean;
   fullName: string;
   aka: string | null;
@@ -127,7 +128,7 @@ export function BasicsSection({ profile, branches }: { profile: EditableProfile;
     <SectionCard title="Name and branch">
       <form action={save} className="flex flex-col gap-5">
         <TextField id="fullName" name="fullName" label="Full name" defaultValue={profile.fullName} required error={state.fieldErrors?.fullName} />
-        <TextField id="aka" name="aka" label="Nickname (optional)" hint="What does the family call them?" defaultValue={profile.aka ?? ""} />
+        <TextField id="aka" name="aka" label="Nickname (optional)" hint={profile.isMe ? "What does the family call you?" : "What does the family call them?"} defaultValue={profile.aka ?? ""} />
         <SelectField id="branch" name="branch" label="Family branch" defaultValue={profile.branchId ?? ""}>
           <option value="">Not sure</option>
           {branches.map((b) => (
@@ -147,7 +148,7 @@ export function BasicsSection({ profile, branches }: { profile: EditableProfile;
 export function LocationSection({ profile }: { profile: EditableProfile }) {
   const [state, save, pending] = useActionState<SaveState, FormData>(saveLocation.bind(null, profile.id), {});
   return (
-    <SectionCard title="Where you live" description="City and state help relatives find family nearby.">
+    <SectionCard title={profile.isMe ? "Where you live" : "Where they live"} description="City and state help relatives find family nearby.">
       <form action={save} className="flex flex-col gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField id="city" name="city" label="City" defaultValue={profile.city ?? ""} autoComplete="address-level2" />
