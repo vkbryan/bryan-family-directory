@@ -72,6 +72,11 @@ export class TestDb {
     return Object.values(row)[0] as T;
   }
 
+  /** Runs a whole script of several statements (like a generated import file). */
+  async script(sql: string) {
+    await this.db.exec(sql);
+  }
+
   /** Runs a statement and returns how many rows it changed. */
   async run(sql: string, params: unknown[] = []): Promise<number> {
     return (await this.db.query(sql, params)).affectedRows ?? 0;
