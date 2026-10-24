@@ -35,7 +35,7 @@ async function HomeContent() {
         </StatusCard>
       );
     case "member":
-      return <MemberHome name={greetingName(viewer.profile)} />;
+      return <MemberHome name={greetingName(viewer.profile)} isAdmin={viewer.isAdmin} />;
   }
 }
 
@@ -70,7 +70,7 @@ function StatusCard({ title, children }: { title: string; children: React.ReactN
   );
 }
 
-async function MemberHome({ name }: { name: string }) {
+async function MemberHome({ name, isAdmin }: { name: string; isAdmin: boolean }) {
   // A simple list for now; the searchable directory arrives in Milestone 4.
   const supabase = await createClient();
   const { data: people } = await supabase.rpc("directory_profiles").select("id, full_name, aka").order("full_name");
@@ -91,6 +91,11 @@ async function MemberHome({ name }: { name: string }) {
       </Card>
       <div className="flex flex-col gap-3 sm:flex-row">
         <ButtonLink href="/invitations">Invite a relative</ButtonLink>
+        {isAdmin && (
+          <ButtonLink href="/admin/claims" variant="secondary">
+            Claim links
+          </ButtonLink>
+        )}
         <form action={signOut}>
           <Button variant="secondary">Sign out</Button>
         </form>

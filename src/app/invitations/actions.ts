@@ -1,9 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
 import { refresh } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/messages";
+import { siteOrigin } from "@/lib/site-origin";
 
 export type InviteState = { link?: string; label?: string; error?: string };
 
@@ -17,11 +17,8 @@ export async function createJoinLink(_prev: InviteState, formData: FormData): Pr
   });
   if (error || !secret) return { error: friendlyError(error) };
 
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const protocol = h.get("x-forwarded-proto") ?? (host?.startsWith("localhost") ? "http" : "https");
   refresh();
-  return { link: `${protocol}://${host}/invite/${secret}`, label };
+  return { link: `${await siteOrigin()}/invite/${secret}`, label };
 }
 
 export async function cancelInvitation(invitationId: string) {
