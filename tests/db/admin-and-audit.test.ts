@@ -49,6 +49,40 @@ describe("admin powers", () => {
   });
 });
 
+describe("admin overviews", () => {
+  test("only admins see sign-in emails and account status", async () => {
+    const db = await freshDb();
+    const admin = await db.member("Avery Admin", { admin: true });
+    const member = await db.member("Member Example");
+    await db.asSystem();
+    await db.run("update auth.users set email = 'member@example.test' where id = $1", [member.accountId]);
+
+    await db.as(admin.accountId);
+    expect(await db.rows("select email, role, full_name from public.admin_accounts() where account_id = $1", [member.accountId])).toEqual([
+      { email: "member@example.test", role: "member", full_name: "Member Example" },
+    ]);
+    await db.as(member.accountId);
+    expect(await db.rows("select * from public.admin_accounts()")).toEqual([]);
+  });
+
+  test("only admins see pending claim requests, with the requester's email", async () => {
+    const db = await freshDb();
+    const admin = await db.member("Avery Admin", { admin: true });
+    const unclaimed = await db.profile({ full_name: "Imported Relative" });
+    const claimant = await db.account();
+    await db.asSystem();
+    await db.run("update auth.users set email = 'claimant@example.test' where id = $1", [claimant]);
+    await db.as(claimant);
+    await db.value("select public.request_profile_claim($1, 'This is me')", [unclaimed]);
+
+    expect(await db.rows("select * from public.admin_claim_requests()")).toEqual([]);
+    await db.as(admin.accountId);
+    expect(await db.rows("select profile_name, requester_email, message from public.admin_claim_requests()")).toEqual([
+      { profile_name: "Imported Relative", requester_email: "claimant@example.test", message: "This is me" },
+    ]);
+  });
+});
+
 describe("audit log", () => {
   test("profile edits are logged with field names, not the personal values", async () => {
     const db = await freshDb();

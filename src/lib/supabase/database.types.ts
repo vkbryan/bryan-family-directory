@@ -596,9 +596,33 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { p_secret: string }; Returns: Json }
+      admin_accounts: {
+        Args: never
+        Returns: {
+          account_id: string
+          created_at: string
+          email: string
+          full_name: string
+          last_sign_in_at: string
+          profile_id: string
+          role: Database["public"]["Enums"]["account_role"]
+          status: Database["public"]["Enums"]["account_status"]
+        }[]
+      }
       admin_add_guardian: {
         Args: { p_account_id: string; p_profile_id: string }
         Returns: undefined
+      }
+      admin_claim_requests: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          message: string
+          profile_id: string
+          profile_name: string
+          requester_email: string
+        }[]
       }
       admin_set_account_role: {
         Args: {
