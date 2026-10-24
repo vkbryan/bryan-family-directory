@@ -61,6 +61,10 @@ Enable it. This refuses any new account that doesn't carry a valid invitation.
 (especially **Send Email**, which would stop all sign-in emails). Since
 migration `20261024000002`, it refuses loudly if attached to Send Email.
 
+**Deleting any hook in the dashboard can remove the sign-in service.s access to
+the `private` schema.** If sign-ups then fail with "Error running hook", re-apply
+the grants in `supabase/migrations/20261024000003_restore_hook_access.sql`.
+
 ## 4. Email sign-in
 
 Authentication → **Sign In / Providers** → **Email**:
