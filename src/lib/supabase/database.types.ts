@@ -709,11 +709,21 @@ export type Database = {
       my_profile_id: { Args: never; Returns: string }
       pending_co_guardian_requests: {
         Args: { p_profile_id: string }
-        Returns: { created_at: string; id: string; message: string; requester_name: string }[]
+        Returns: {
+          created_at: string
+          id: string
+          message: string
+          requester_name: string
+        }[]
       }
       profile_guardians: {
         Args: { p_profile_id: string }
-        Returns: { account_id: string; full_name: string; granted_at: string; is_me: boolean }[]
+        Returns: {
+          account_id: string
+          full_name: string
+          granted_at: string
+          is_me: boolean
+        }[]
       }
       remove_guardian: {
         Args: { p_account_id: string; p_profile_id: string; p_reason?: string }
