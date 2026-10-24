@@ -209,6 +209,42 @@ describe("two guardians, separate logins", () => {
   });
 });
 
+describe("guardian helpers for the child screens", () => {
+  test("guardians and admins see who manages a child; others see nobody", async () => {
+    const db = await freshDb();
+    const { parent, childId } = await parentWithChild(db);
+    const admin = await db.member("Avery Admin", { admin: true });
+    const other = await db.member("Other Member");
+
+    await db.as(parent.accountId);
+    expect(await db.rows("select full_name, is_me from public.profile_guardians($1)", [childId])).toEqual([
+      { full_name: "Parent One", is_me: true },
+    ]);
+    await db.as(admin.accountId);
+    expect(await db.rows("select full_name from public.profile_guardians($1)", [childId])).toEqual([
+      { full_name: "Parent One" },
+    ]);
+    await db.as(other.accountId);
+    expect(await db.rows("select * from public.profile_guardians($1)", [childId])).toEqual([]);
+  });
+
+  test("only guardians and admins see pending co-manage requests", async () => {
+    const db = await freshDb();
+    const { parent, childId } = await parentWithChild(db);
+    const second = await db.member("Parent Two");
+    const other = await db.member("Other Member");
+    await db.as(second.accountId);
+    await db.value("select public.request_co_guardianship($1, 'I am the other parent')", [childId]);
+
+    await db.as(other.accountId);
+    expect(await db.rows("select * from public.pending_co_guardian_requests($1)", [childId])).toEqual([]);
+    await db.as(parent.accountId);
+    expect(
+      await db.rows("select requester_name, message from public.pending_co_guardian_requests($1)", [childId]),
+    ).toEqual([{ requester_name: "Parent Two", message: "I am the other parent" }]);
+  });
+});
+
 describe("handing a profile over when a child grows up", () => {
   test("the young adult takes ownership, guardians lose access, privacy resets", async () => {
     const db = await freshDb();
