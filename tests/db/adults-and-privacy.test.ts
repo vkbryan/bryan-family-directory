@@ -135,6 +135,32 @@ describe("the directory view respects privacy settings", () => {
     expect(await db.one(sql, [owner])).toMatchObject({ phone: "555-0100", birth_year: 1980 });
   });
 
+  test("admins browse like everyone else: hidden fields stay hidden, but they can still edit", async () => {
+    const db = await freshDb();
+    const admin = await db.member("Avery Admin", { admin: true });
+    const owner = await db.member("Owner Example");
+    await db.run("update public.profiles set phone = '555-0100', phone_visibility = 'private' where id = $1", [
+      owner.profileId,
+    ]);
+    const parent = await db.member("Parent One");
+    await db.as(parent.accountId);
+    const childId = await db.value<string>("select public.create_child_profile('Kid Example', 2020, 6, 15)");
+
+    await db.as(admin.accountId);
+    expect(
+      await db.one("select phone, can_edit from public.directory_profiles() where id = $1", [owner.profileId]),
+    ).toEqual({ phone: null, can_edit: true });
+    expect(
+      await db.one("select birth_month, birth_year from public.directory_profiles() where id = $1", [childId]),
+    ).toEqual({ birth_month: null, birth_year: null });
+
+    // The guardian still sees the child's full birthday.
+    await db.as(parent.accountId);
+    expect(
+      await db.one("select birth_month, birth_year from public.directory_profiles() where id = $1", [childId]),
+    ).toEqual({ birth_month: 6, birth_year: 2020 });
+  });
+
   test("archived profiles disappear from the directory", async () => {
     const db = await freshDb();
     const viewer = await db.member("Viewer Example");
