@@ -53,6 +53,12 @@ describe("the sign-up gate (runs before Supabase creates any new sign-in user)",
     expect(await db.signUpGate(secret)).toEqual({});
   });
 
+  test("refuses loudly if attached to the wrong Supabase hook", async () => {
+    const db = await freshDb();
+    const { secret } = await joinLink(db);
+    expect((await db.signUpGate(secret, "send-email")).error?.message).toMatch(/wrong Supabase hook/);
+  });
+
   test("app users cannot call the gate", async () => {
     const db = await freshDb();
     const { inviter } = await joinLink(db);

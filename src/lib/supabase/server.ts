@@ -1,6 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import type { Database } from "./database.types";
 
 /**
@@ -9,6 +10,9 @@ import type { Database } from "./database.types";
  * row-level security, so it can only ever see what that person may see.
  */
 export async function createClient() {
+  // Family data is always read per visit, never prerendered. This also lets
+  // the Supabase library check the clock (session expiry) safely.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

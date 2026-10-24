@@ -105,10 +105,13 @@ export class TestDb {
   }
 
   /** Calls the sign-up gate the way Supabase's sign-in service does. */
-  async signUpGate(invitation?: string): Promise<{ error?: { message: string } }> {
+  async signUpGate(invitation?: string, hookName = "before-user-created"): Promise<{ error?: { message: string } }> {
     await this.db.exec("reset role");
     await this.db.exec("set role supabase_auth_admin");
-    const event = { user: { email: "new@example.test", user_metadata: invitation ? { invitation } : {} } };
+    const event = {
+      metadata: { name: hookName },
+      user: { email: "new@example.test", user_metadata: invitation ? { invitation } : {} },
+    };
     const result = await this.value<{ error?: { message: string } }>("select private.before_user_created($1)", [event]);
     await this.db.exec("reset role");
     return result;

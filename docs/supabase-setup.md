@@ -57,6 +57,10 @@ Authentication → **Auth Hooks** → **Add hook** → **Before User Created**:
 
 Enable it. This refuses any new account that doesn't carry a valid invitation.
 
+**Only "Before User Created".** Do not attach this function to any other hook
+(especially **Send Email**, which would stop all sign-in emails). Since
+migration `20261024000001`, it refuses loudly if attached to the wrong hook.
+
 ## 4. Email sign-in
 
 Authentication → **Sign In / Providers** → **Email**:
