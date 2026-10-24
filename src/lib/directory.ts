@@ -62,6 +62,16 @@ export const getDirectory = cache(async (): Promise<Person[]> => {
     .sort(byName);
 });
 
+/** Profiles the viewer is an active guardian of (each person can read their own guardian rows). */
+export const getMyGuardedIds = cache(async (): Promise<Set<string>> => {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getClaims();
+  const me = auth?.claims?.sub;
+  if (!me) return new Set();
+  const { data } = await supabase.from("profile_managers").select("profile_id").eq("account_id", me).is("revoked_at", null);
+  return new Set((data ?? []).map((row) => row.profile_id));
+});
+
 /** All branch names, for the branch filter (including branches nobody has joined yet). */
 export const getBranchNames = cache(async () => {
   const supabase = await createClient();

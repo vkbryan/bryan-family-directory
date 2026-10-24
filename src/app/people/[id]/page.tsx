@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { getViewer } from "@/lib/auth";
-import { getDirectory } from "@/lib/directory";
+import { getDirectory, getMyGuardedIds } from "@/lib/directory";
+import { createClient } from "@/lib/supabase/server";
+import { RequestToManage } from "./request-to-manage";
 import {
   birthdayLabel,
   filterHref,
@@ -37,8 +39,25 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
   if (viewer.state !== "member") redirect("/");
 
   // Only people this viewer may see are in the directory, so anyone else is "not found".
-  const person = (await getDirectory()).find((p) => p.id === id);
+  const [everyone, guarded] = await Promise.all([getDirectory(), getMyGuardedIds()]);
+  const person = everyone.find((p) => p.id === id);
   if (!person) notFound();
+
+  const first = person.aka || person.fullName.split(" ")[0];
+  const myChildren = person.isMe ? everyone.filter((p) => guarded.has(p.id)) : [];
+  const canAskToManage = person.isChild && !guarded.has(person.id);
+  let requestPending = false;
+  if (canAskToManage) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("profile_requests")
+      .select("id")
+      .eq("profile_id", person.id)
+      .eq("kind", "co_guardian")
+      .eq("status", "pending")
+      .limit(1);
+    requestPending = Boolean(data?.length);
+  }
 
   const place = placeLabel(person);
   const birthday = birthdayLabel(person);
@@ -132,6 +151,53 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
 
       {person.isChild && (
         <p className="text-muted">Children&apos;s profiles never show contact details, and their birthday stays private.</p>
+      )}
+
+      {person.canEdit && (
+        <div>
+          <ButtonLink href={`/people/${person.id}/edit`}>
+            {person.isMe ? "Edit your profile" : guarded.has(person.id) ? `Edit ${first}'s profile` : "Edit profile (admin)"}
+          </ButtonLink>
+        </div>
+      )}
+
+      {person.isMe && (
+        <Card className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">Your children</h2>
+          {myChildren.length > 0 ? (
+            <ul className="flex flex-col gap-3">
+              {myChildren.map((child) => (
+                <li key={child.id}>
+                  <Link href={`/people/${child.id}`} className="flex items-center gap-3 text-foreground no-underline">
+                    <Avatar name={child.fullName} photoUrl={child.photoUrl} />
+                    <span className="font-semibold">{child.fullName}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted">Add your children so relatives can see them grow up. They don&apos;t need an email or an account.</p>
+          )}
+          <div>
+            <ButtonLink href="/children/new" variant="secondary">
+              Add a child
+            </ButtonLink>
+          </div>
+        </Card>
+      )}
+
+      {canAskToManage && (
+        <Card className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold">Are you {first}&apos;s parent or guardian?</h2>
+          {requestPending ? (
+            <p>Your request to help manage this profile is waiting for approval.</p>
+          ) : (
+            <>
+              <p>Ask to help manage this profile. A current parent or guardian (or an admin) will approve it.</p>
+              <RequestToManage profileId={person.id} firstName={first} />
+            </>
+          )}
+        </Card>
       )}
 
       {viewer.isAdmin && !person.isClaimed && !person.isChild && (
