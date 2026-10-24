@@ -105,12 +105,18 @@ export class TestDb {
   }
 
   /** Calls the sign-up gate the way Supabase's sign-in service does. */
-  async signUpGate(invitation?: string, hookName = "before-user-created"): Promise<{ error?: { message: string } }> {
+  async signUpGate(
+    invitation?: string,
+    hook: "before-user-created" | "send-email" = "before-user-created",
+  ): Promise<{ error?: { message: string } }> {
     await this.db.exec("reset role");
     await this.db.exec("set role supabase_auth_admin");
     const event = {
-      metadata: { name: hookName },
+      // The live service's metadata differs from its docs, so the gate must
+      // not depend on it. A Send Email call always carries email_data.
+      metadata: { name: "unspecified" },
       user: { email: "new@example.test", user_metadata: invitation ? { invitation } : {} },
+      ...(hook === "send-email" ? { email_data: { token: "123456", email_action_type: "signup" } } : {}),
     };
     const result = await this.value<{ error?: { message: string } }>("select private.before_user_created($1)", [event]);
     await this.db.exec("reset role");
