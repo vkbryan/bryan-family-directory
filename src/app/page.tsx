@@ -187,8 +187,8 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
       <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:flex-wrap">
         <ButtonLink href="/invitations">Invite a relative</ButtonLink>
         {isAdmin && (
-          <ButtonLink href="/admin/claims" variant="secondary">
-            Claim links
+          <ButtonLink href="/admin" variant="secondary">
+            Admin
           </ButtonLink>
         )}
         <form action={signOut}>
