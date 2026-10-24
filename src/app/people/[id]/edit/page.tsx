@@ -92,7 +92,9 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
 
   const iAmGuardian = (guardians?.data ?? []).some((g) => g.is_me);
   const age = p.birth_year ? ageOn(new Date(), p.birth_year, p.birth_month, p.birth_day) : null;
-  const canHandOver = isChild && !p.account_id && (viewer.isAdmin || (iAmGuardian && age !== null && age >= 13));
+  // Offered from age 13. Admins may also hand over a child whose birth year is unknown.
+  const oldEnough = age === null ? viewer.isAdmin : age >= 13;
+  const canHandOver = isChild && !p.account_id && oldEnough && (viewer.isAdmin || iAmGuardian);
 
   return (
     <div className="flex flex-col gap-6">

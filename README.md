@@ -11,7 +11,7 @@ another, see where relatives live, and share contact details they choose to shar
 | M2 Sign-in and enrollment | done (invite-only email-code sign-in, live; claim links for the 8 come after M3) |
 | M3 Import the 8 Airtable profiles | done (8 profiles and 8 photos imported; claim links next) |
 | M4 Directory | done (search, combined filters, birthdays, browse by branch/interest/place, profile pages) |
-| M5 Profiles and children | not started |
+| M5 Profiles and children | done (editing with privacy choices, photo upload, children, co-parents, requests, hand-over) |
 | M6 Admin | not started |
 | M7 Pilot | not started |
 | M8 Launch | not started |
