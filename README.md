@@ -12,7 +12,7 @@ another, see where relatives live, and share contact details they choose to shar
 | M3 Import the 8 Airtable profiles | done (8 profiles and 8 photos imported; claim links next) |
 | M4 Directory | done (search, combined filters, birthdays, browse by branch/interest/place, profile pages) |
 | M5 Profiles and children | done (editing with privacy choices, photo upload, children, co-parents, requests, hand-over) |
-| M6 Admin | not started |
+| M6 Admin | done (members, requests, branches, activity; nightly encrypted backups with a passing practice restore) |
 | M7 Pilot | not started |
 | M8 Launch | not started |
 
