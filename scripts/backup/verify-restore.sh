@@ -8,11 +8,14 @@
 set -euo pipefail
 
 DIR="${1:?usage: verify-restore.sh <backup dir>}"
-LOCAL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+# The throwaway local database's built-in administrator. Some of Supabase's
+# own tables (storage, auth) can only be emptied by it.
+LOCAL="postgresql://supabase_admin:postgres@127.0.0.1:54322/postgres"
 
-# Empty every table the backup will fill (triggers off, so the append-only
+# Empty every table the backup has rows for (triggers off, so the append-only
 # audit log can be cleared in this throwaway copy), then load the data.
-tables=$(grep -oE '^COPY "?[a-z_]+"?\."?[a-z_0-9]+"?' "$DIR/data.sql" | sed -E 's/^COPY //; s/"//g' | sort -u)
+# A COPY block whose next line is "\." has no rows, so it's skipped.
+tables=$(awk '/^COPY /{ name=$2; getline next_line; if (next_line != "\\.") print name }' "$DIR/data.sql" | sed 's/"//g' | sort -u)
 {
   echo "SET session_replication_role = replica;"
   for t in $tables; do echo "TRUNCATE $t CASCADE;"; done
