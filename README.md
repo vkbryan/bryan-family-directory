@@ -3,6 +3,9 @@
 A private, invitation-only directory that helps our extended family find one
 another, see where relatives live, and share contact details they choose to share.
 
+**Live at https://bryan-family.com** (Vercel, free Hobby plan). Changes merged into
+`main` go live automatically. See [docs/deployment.md](docs/deployment.md).
+
 ## Status
 
 | Milestone | State |
@@ -13,7 +16,7 @@ another, see where relatives live, and share contact details they choose to shar
 | M4 Directory | done (search, combined filters, birthdays, browse by branch/interest/place, profile pages) |
 | M5 Profiles and children | done (editing with privacy choices, photo upload, children, co-parents, requests, hand-over) |
 | M6 Admin | done (members, requests, branches, activity; nightly encrypted backups with a passing practice restore) |
-| M7 Pilot | not started |
+| M7 Pilot | site online at bryan-family.com; pilot invitations next |
 | M8 Launch | not started |
 
 ## How it is built
