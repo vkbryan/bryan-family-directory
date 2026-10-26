@@ -42,6 +42,7 @@ const describe: Record<string, string> = {
   "import.airtable": "imported the Airtable records",
   "branches.added": "added family branches",
   "profiles.states_tidied": "tidied state names (GA and NY written in full)",
+  "relationship.added": "recorded a parent in the family tree",
 };
 
 async function ActivityContent() {
