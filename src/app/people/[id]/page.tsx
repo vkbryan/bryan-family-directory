@@ -54,6 +54,7 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
       .from("profile_requests")
       .select("id")
       .eq("profile_id", person.id)
+      .eq("requester_id", viewer.accountId)
       .eq("kind", "co_guardian")
       .eq("status", "pending")
       .limit(1);
