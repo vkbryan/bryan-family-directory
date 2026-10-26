@@ -13,6 +13,8 @@ type Preview = {
   recipient_label?: string | null;
   inviter_name?: string | null;
   profile_name?: string | null;
+  has_photo?: boolean;
+  photo_caption?: string | null;
 };
 
 export default function InvitePage({ params }: PageProps<"/invite/[secret]">) {
@@ -68,6 +70,18 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
 
   return (
     <div className="flex flex-col gap-6">
+      {preview.has_photo && (
+        <figure className="flex flex-col gap-2">
+          {/* Served only with this valid invitation; never public, never cached. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/invite/${secret}/photo`}
+            alt={preview.photo_caption || "The Bryan family together"}
+            className="w-full rounded-xl border-[3px] border-gold object-cover"
+          />
+          {preview.photo_caption && <figcaption className="text-center text-muted">{preview.photo_caption}</figcaption>}
+        </figure>
+      )}
       <h1 className="text-3xl font-bold">{heading}</h1>
       <p className="text-lg">{explanation}</p>
       <Card className="flex flex-col gap-4">

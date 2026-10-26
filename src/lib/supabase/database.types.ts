@@ -718,6 +718,10 @@ export type Database = {
         Args: { p_account_id: string; p_profile_id: string; p_via: string }
         Returns: undefined
       }
+      invitation_photo: {
+        Args: { p_secret: string }
+        Returns: { caption: string; content_type: string; image_base64: string }[]
+      }
       invitation_preview: { Args: { p_secret: string }; Returns: Json }
       is_active_member: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }

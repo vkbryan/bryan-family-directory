@@ -128,6 +128,52 @@ describe("pending accounts", () => {
   });
 });
 
+describe("family photo on the invitation page", () => {
+  async function withPhoto(db: TestDb) {
+    await db.asSystem();
+    await db.run(
+      "insert into private.site_photos (name, image, caption) values ('invitation', '\\xffd8ffe0'::bytea, 'Our reunion')",
+    );
+  }
+
+  test("shown with a valid invitation, even before signing in", async () => {
+    const db = await freshDb();
+    const { secret } = await joinLink(db);
+    await withPhoto(db);
+    await db.asAnon();
+    expect(await db.rows("select image_base64, caption from public.invitation_photo($1)", [secret])).toEqual([
+      { image_base64: "/9j/4A==", caption: "Our reunion" },
+    ]);
+    expect(await db.value("select public.invitation_preview($1)", [secret])).toMatchObject({ has_photo: true, photo_caption: "Our reunion" });
+  });
+
+  test("never shown for made-up, used, expired or cancelled links", async () => {
+    const db = await freshDb();
+    const { inviter, secret: used } = await joinLink(db);
+    await db.as(inviter.accountId);
+    const expired = await db.value<string>("select public.create_invitation('join')");
+    const revoked = await db.value<string>("select public.create_invitation('join')");
+    await withPhoto(db);
+    await db.run("update public.invitations set expires_at = now() - interval '1 minute' where token_hash = sha256(convert_to($1, 'UTF8'))", [expired]);
+    await db.run("update public.invitations set revoked_at = now() where token_hash = sha256(convert_to($1, 'UTF8'))", [revoked]);
+    const joiner = await db.signUp({ invitation: used });
+    await db.as(joiner);
+    await db.value("select public.accept_invitation($1)", [used]);
+
+    await db.asAnon();
+    for (const secret of ["made-up", used, expired, revoked]) {
+      expect(await db.rows("select * from public.invitation_photo($1)", [secret])).toEqual([]);
+    }
+  });
+
+  test("the photo table itself can't be read by app users", async () => {
+    const db = await freshDb();
+    await withPhoto(db);
+    await db.asAnon();
+    await expect(db.rows("select * from private.site_photos")).rejects.toThrow(/permission denied/);
+  });
+});
+
 describe("invitation preview (shown before signing in)", () => {
   test("shows who sent it and who it is for, without signing in", async () => {
     const db = await freshDb();
@@ -139,6 +185,8 @@ describe("invitation preview (shown before signing in)", () => {
       recipient_label: "Cousin Robin",
       inviter_name: "Inviter",
       profile_name: null,
+      has_photo: false,
+      photo_caption: null,
     });
   });
 
