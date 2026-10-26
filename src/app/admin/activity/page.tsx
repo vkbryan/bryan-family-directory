@@ -43,6 +43,7 @@ const describe: Record<string, string> = {
   "branches.added": "added family branches",
   "profiles.states_tidied": "tidied state names (GA and NY written in full)",
   "relationship.added": "recorded a parent in the family tree",
+  "interests.split": "split a list of interests into separate ones",
 };
 
 async function ActivityContent() {
