@@ -5,6 +5,7 @@ const links = [
   { href: "/admin/members", label: "Members" },
   { href: "/admin/requests", label: "Requests" },
   { href: "/admin/claims", label: "Claim links" },
+  { href: "/invitations", label: "Invite a relative" },
   { href: "/admin/branches", label: "Branches" },
   { href: "/admin/activity", label: "Activity" },
 ];
