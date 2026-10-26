@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { invitationStatus, requireAdminViewer } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { Card, Loading } from "@/components/ui";
+import { PilotChecklist } from "./pilot-checklist";
 
 export const metadata = { title: "Admin · Bryan Family Directory" };
 
@@ -18,7 +19,7 @@ export default function AdminHome() {
 }
 
 async function AdminSummary() {
-  await requireAdminViewer();
+  const viewer = await requireAdminViewer();
   const supabase = await createClient();
   const [{ data: accounts }, { data: claimRequests }, { data: coRequests }, { data: profiles }, { data: invitations }] =
     await Promise.all([
@@ -45,17 +46,20 @@ async function AdminSummary() {
   ];
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
-      {tiles.map((tile) => (
-        <li key={tile.label}>
-          <Link href={tile.href} className="block text-foreground no-underline">
-            <Card className={tile.highlight ? "border-accent" : ""}>
-              <p className="text-3xl font-bold">{tile.value}</p>
-              <p className="text-muted">{tile.label}</p>
-            </Card>
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {tiles.map((tile) => (
+          <li key={tile.label}>
+            <Link href={tile.href} className="block text-foreground no-underline">
+              <Card className={tile.highlight ? "border-accent" : ""}>
+                <p className="text-3xl font-bold">{tile.value}</p>
+                <p className="text-muted">{tile.label}</p>
+              </Card>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <PilotChecklist myAccountId={viewer.accountId} />
+    </>
   );
 }

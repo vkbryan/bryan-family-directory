@@ -31,3 +31,8 @@ export function invitationStatus(inv: InvitationTimes) {
   if (inv.revoked_at) return "Cancelled";
   return new Date(inv.expires_at).getTime() < Date.now() ? "Expired" : "Waiting";
 }
+
+/** The moment `days` days ago, as an ISO timestamp for database filters. */
+export function daysAgo(days: number) {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}

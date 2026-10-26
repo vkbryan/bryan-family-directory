@@ -6,7 +6,12 @@ export type Viewer =
   | { state: "pending" }
   | { state: "deactivated" }
   | { state: "needs-profile"; isAdmin: boolean }
-  | { state: "member"; isAdmin: boolean; profile: { id: string; fullName: string; aka: string | null } };
+  | {
+      state: "member";
+      accountId: string;
+      isAdmin: boolean;
+      profile: { id: string; fullName: string; aka: string | null };
+    };
 
 /**
  * Who is looking at the page, and how far along they are.
@@ -30,7 +35,7 @@ export async function getViewer(): Promise<Viewer> {
     .maybeSingle();
   if (!me) return { state: "needs-profile", isAdmin };
 
-  return { state: "member", isAdmin, profile: { id: me.id, fullName: me.full_name, aka: me.aka } };
+  return { state: "member", accountId: userId, isAdmin, profile: { id: me.id, fullName: me.full_name, aka: me.aka } };
 }
 
 /** First name or nickname, for greetings. */
