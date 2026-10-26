@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { getViewer } from "@/lib/auth";
 import { getDirectory, getMyGuardedIds } from "@/lib/directory";
+import { branchColorClass } from "@/lib/branch-colors";
 import { createClient } from "@/lib/supabase/server";
 import { RequestToManage } from "./request-to-manage";
 import {
@@ -102,7 +103,12 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
             <ul className="flex flex-wrap gap-2">
               {person.branches.map((b) => (
                 <li key={b.slug}>
-                  <Link href={filterHref(noFilters, { branch: b.slug })}>{b.name}</Link>
+                  <Link
+                    href={filterHref(noFilters, { branch: b.slug })}
+                    className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 font-medium no-underline ${branchColorClass(b.color)}`}
+                  >
+                    {b.name}
+                  </Link>
                 </li>
               ))}
             </ul>

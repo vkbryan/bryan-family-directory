@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { branchColorClass } from "@/lib/branch-colors";
 import { placeLabel, type Person } from "@/lib/directory-logic";
 import { Avatar } from "./avatar";
 
@@ -16,7 +17,7 @@ export function PersonCard({ person }: { person: Person }) {
       {person.aka && <p className="text-sm text-muted">&ldquo;{person.aka}&rdquo;</p>}
       {place && <p className="text-sm">{place}</p>}
       {person.primaryBranch && (
-        <p className="rounded-full bg-green-soft px-2.5 py-0.5 text-xs font-medium text-green-text">{person.primaryBranch}</p>
+        <p className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${branchColorClass(person.primaryBranchColor)}`}>{person.primaryBranch}</p>
       )}
       {note && <p className="text-sm text-muted">{note}</p>}
     </Link>

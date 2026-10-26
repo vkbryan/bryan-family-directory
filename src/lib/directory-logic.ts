@@ -16,7 +16,8 @@ export type Person = {
   birthYear: number | null;
   photoUrl: string | null;
   primaryBranch: string | null;
-  branches: { slug: string; name: string }[];
+  primaryBranchColor?: number;
+  branches: { slug: string; name: string; color?: number }[];
   hobbies: { slug: string; name: string }[];
   contactEmail: string | null;
   phone: string | null;

@@ -16,6 +16,7 @@ import {
 import { Avatar } from "@/components/avatar";
 import { PersonCard } from "@/components/person-card";
 import { YourProfileCard } from "@/components/your-profile-card";
+import { branchColorClass } from "@/lib/branch-colors";
 import { Button, ButtonLink, Card, Loading } from "@/components/ui";
 import { DirectoryFilters } from "./directory-filters";
 import { signOut } from "./actions";
@@ -155,7 +156,11 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
             </Section>
           )}
           <Section title="Browse by family branch">
-            <ChipList items={branches} href={(slug) => filterHref(filters, { branch: slug })} />
+            <ChipList
+              items={branches}
+              href={(slug) => filterHref(filters, { branch: slug })}
+              colorFor={(slug) => branchColorClass(allBranches.find((b) => b.slug === slug)?.color)}
+            />
           </Section>
           {hobbies.length > 0 && (
             <Section title="Shared interests">
@@ -221,14 +226,22 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function ChipList({ items, href }: { items: { slug: string; name: string; count: number }[]; href: (slug: string) => string }) {
+function ChipList({
+  items,
+  href,
+  colorFor,
+}: {
+  items: { slug: string; name: string; count: number }[];
+  href: (slug: string) => string;
+  colorFor?: (slug: string) => string;
+}) {
   return (
     <ul className="flex flex-wrap gap-2">
       {items.map((item) => (
         <li key={item.slug}>
           <Link
             href={href(item.slug)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-green-soft px-4 py-2 font-medium text-green-text no-underline hover:outline hover:outline-2 hover:outline-accent"
+            className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 font-medium no-underline hover:outline hover:outline-2 hover:outline-accent ${colorFor ? colorFor(item.slug) : "bg-green-soft text-green-text"}`}
           >
             {item.name}
             <span className="text-sm">{item.count}</span>

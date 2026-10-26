@@ -12,12 +12,14 @@ const PHOTO_LINK_SECONDS = 60 * 60;
  */
 export const getDirectory = cache(async (): Promise<Person[]> => {
   const supabase = await createClient();
-  const [{ data: rows }, { data: branchLinks }, { data: hobbyLinks }] = await Promise.all([
+  const [{ data: rows }, { data: branchLinks }, { data: hobbyLinks }, allBranches] = await Promise.all([
     supabase.rpc("directory_profiles").select("*"),
     supabase.from("profile_branches").select("profile_id, is_primary, family_branches(name)"),
     supabase.from("profile_hobbies").select("profile_id, hobbies(name, slug)"),
+    getBranchNames(),
   ]);
   if (!rows) return [];
+  const branchColor = new Map(allBranches.map((b) => [b.name, b.color]));
 
   // Short-lived private links, one per photo this viewer is allowed to see.
   const paths = rows.map((r) => r.photo_path).filter((p): p is string => Boolean(p));
@@ -47,7 +49,12 @@ export const getDirectory = cache(async (): Promise<Person[]> => {
         birthYear: r.birth_year,
         photoUrl: r.photo_path ? (photoUrls.get(r.photo_path) ?? null) : null,
         primaryBranch: branches.find((b) => b.is_primary)?.family_branches?.name ?? null,
-        branches: branches.map((b) => ({ slug: slugOf(b.family_branches!.name), name: b.family_branches!.name })),
+        primaryBranchColor: branchColor.get(branches.find((b) => b.is_primary)?.family_branches?.name ?? ""),
+        branches: branches.map((b) => ({
+          slug: slugOf(b.family_branches!.name),
+          name: b.family_branches!.name,
+          color: branchColor.get(b.family_branches!.name),
+        })),
         hobbies: (hobbyLinks ?? [])
           .filter((l) => l.profile_id === r.id && l.hobbies)
           .map((l) => ({ slug: l.hobbies!.slug, name: l.hobbies!.name }))
@@ -75,6 +82,9 @@ export const getMyGuardedIds = cache(async (): Promise<Set<string>> => {
 /** All branch names, for the branch filter (including branches nobody has joined yet). */
 export const getBranchNames = cache(async () => {
   const supabase = await createClient();
-  const { data } = await supabase.from("family_branches").select("name").order("sort_order").order("name");
-  return (data ?? []).map((b) => ({ slug: slugOf(b.name), name: b.name }));
+  const { data } = await supabase.from("family_branches").select("name, created_at").order("sort_order").order("name");
+  // Colors follow the order branches were added, so a new branch never changes anyone else's color.
+  const byAge = [...(data ?? [])].sort((a, b) => a.created_at.localeCompare(b.created_at) || a.name.localeCompare(b.name));
+  const colorOf = new Map(byAge.map((b, i) => [b.name, i]));
+  return (data ?? []).map((b) => ({ slug: slugOf(b.name), name: b.name, color: colorOf.get(b.name) ?? 0 }));
 });
