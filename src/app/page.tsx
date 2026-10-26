@@ -15,6 +15,7 @@ import {
 } from "@/lib/directory-logic";
 import { Avatar } from "@/components/avatar";
 import { PersonCard } from "@/components/person-card";
+import { YourProfileCard } from "@/components/your-profile-card";
 import { Button, ButtonLink, Card, Loading } from "@/components/ui";
 import { DirectoryFilters } from "./directory-filters";
 import { signOut } from "./actions";
@@ -106,6 +107,7 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
   const branches = tally(everyone.flatMap((p) => p.branches));
   const places = tally(everyone.filter((p) => p.state).map((p) => ({ slug: p.state!, name: p.state! })));
   const birthdays = upcomingBirthdays(everyone, new Date());
+  const me = everyone.find((p) => p.isMe);
 
   return (
     <div className="flex flex-col gap-8">
@@ -115,6 +117,8 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
           {everyone.length} family {everyone.length === 1 ? "member" : "members"} in the directory
         </p>
       </div>
+
+      {me && <YourProfileCard me={me} />}
 
       <DirectoryFilters
         key={JSON.stringify(filters)}
