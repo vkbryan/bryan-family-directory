@@ -32,7 +32,7 @@ export function ClaimChoices({ candidates, pending }: { candidates: Candidate[];
         {candidates.map((c) => (
           <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3">
             <span className="flex items-center gap-3">
-              <Avatar name={c.fullName} photoUrl={c.photoUrl} />
+              <Avatar name={c.fullName} photoUrl={c.photoUrl} size="sm" />
               <span>
                 <span className="font-semibold">{c.fullName}</span>
                 {c.aka && <span className="text-muted"> ({c.aka})</span>}

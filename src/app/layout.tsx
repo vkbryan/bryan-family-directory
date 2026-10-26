@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import Link from "next/link";
+import { FamilyBanner } from "@/components/family-banner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,24 +15,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf8f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#17140f" },
-  ],
+  themeColor: "#111111",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
-        <header className="border-b border-border bg-surface">
-          <div className="mx-auto flex max-w-2xl items-center px-4 py-3">
-            <Link href="/" className="text-lg font-semibold text-foreground no-underline">
-              Bryan Family Directory
-            </Link>
-          </div>
-        </header>
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">{children}</main>
+        <FamilyBanner />
+        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</main>
       </body>
     </html>
   );

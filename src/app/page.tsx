@@ -129,14 +129,17 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
         <>
           {birthdays.length > 0 && (
             <Section title="Birthdays in the next 30 days">
-              <ul className="flex flex-col gap-3">
+              <ul className="grid gap-3 sm:grid-cols-2">
                 {birthdays.map(({ person, daysAway, turning }) => (
                   <li key={person.id}>
-                    <Link href={`/people/${person.id}`} className="flex items-center gap-3 text-foreground no-underline">
-                      <Avatar name={person.fullName} photoUrl={person.photoUrl} />
+                    <Link
+                      href={`/people/${person.id}`}
+                      className="flex items-center gap-3 rounded-xl bg-gold-soft p-3 text-gold-text no-underline"
+                    >
+                      <Avatar name={person.fullName} photoUrl={person.photoUrl} size="sm" />
                       <span>
                         <span className="font-semibold">{person.aka || person.fullName}</span>
-                        <span className="block text-sm text-muted">
+                        <span className="block text-sm">
                           {whenLabel(daysAway)}
                           {turning !== null && !person.isChild ? ` · turning ${turning}` : ""}
                         </span>
@@ -174,7 +177,7 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
             </p>
           </Card>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {results.map((person) => (
               <li key={person.id}>
                 <PersonCard person={person} />
@@ -221,10 +224,10 @@ function ChipList({ items, href }: { items: { slug: string; name: string; count:
         <li key={item.slug}>
           <Link
             href={href(item.slug)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-foreground no-underline hover:border-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-green-soft px-4 py-2 font-medium text-green-text no-underline hover:outline hover:outline-2 hover:outline-accent"
           >
             {item.name}
-            <span className="text-sm text-muted">{item.count}</span>
+            <span className="text-sm">{item.count}</span>
           </Link>
         </li>
       ))}

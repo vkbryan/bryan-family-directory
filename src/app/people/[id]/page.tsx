@@ -116,7 +116,7 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
                 <li key={h.slug}>
                   <Link
                     href={filterHref(noFilters, { hobby: h.slug })}
-                    className="inline-flex min-h-11 items-center rounded-full border border-border bg-background px-4 py-2 text-foreground no-underline hover:border-accent"
+                    className="inline-flex min-h-11 items-center rounded-full bg-green-soft px-4 py-2 font-medium text-green-text no-underline hover:outline hover:outline-2 hover:outline-accent"
                   >
                     {h.name}
                   </Link>
@@ -169,7 +169,7 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
               {myChildren.map((child) => (
                 <li key={child.id}>
                   <Link href={`/people/${child.id}`} className="flex items-center gap-3 text-foreground no-underline">
-                    <Avatar name={child.fullName} photoUrl={child.photoUrl} />
+                    <Avatar name={child.fullName} photoUrl={child.photoUrl} size="sm" />
                     <span className="font-semibold">{child.fullName}</span>
                   </Link>
                 </li>

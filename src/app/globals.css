@@ -1,31 +1,52 @@
 @import "tailwindcss";
 
-/* Warm, high-contrast colors. All text/background pairs meet WCAG AA. */
+/*
+ * Jamaican flag colors: black, green and gold.
+ * Text and button pairs are checked for WCAG AA contrast. Buttons use a
+ * deeper green than the flag's (white on flag green is too faint), and gold
+ * always sits behind dark text, never as text on white.
+ */
 :root {
-  --background: #fbf8f3;
+  --background: #fafaf7;
   --surface: #ffffff;
-  --foreground: #1f1a14;
-  --muted: #5c5247;
-  --border: #ded5c8;
-  --accent: #7a3e1d;
-  --accent-hover: #5f2f15;
+  --foreground: #141414;
+  --muted: #55554f;
+  --border: #e2e2dc;
+  --accent: #007a33;
+  --accent-hover: #00602a;
   --accent-foreground: #ffffff;
-  --danger: #a12622;
-  --success: #2f6b3a;
+  --banner: #111111;
+  --banner-foreground: #ffffff;
+  --banner-muted: #d6d6d6;
+  --gold: #fed100;
+  --gold-soft: #fff4c2;
+  --gold-text: #4a3b00;
+  --green-soft: #e3f3e9;
+  --green-text: #00532a;
+  --flag-green: #009b3a;
+  --danger: #b3261e;
+  --success: #00602a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #17140f;
-    --surface: #221d17;
-    --foreground: #f4efe7;
-    --muted: #c4b8a8;
-    --border: #3d352b;
-    --accent: #e7a77a;
-    --accent-hover: #f0bf9c;
-    --accent-foreground: #1f1a14;
-    --danger: #f09a96;
-    --success: #8fd19c;
+    --background: #121212;
+    --surface: #1c1c1a;
+    --foreground: #f2f2ee;
+    --muted: #bdbdb8;
+    --border: #33332f;
+    --accent: #fed100;
+    --accent-hover: #ffe14d;
+    --accent-foreground: #111111;
+    --banner: #000000;
+    --banner-foreground: #ffffff;
+    --banner-muted: #bdbdb8;
+    --gold-soft: #3a3100;
+    --gold-text: #ffe680;
+    --green-soft: #0d3a22;
+    --green-text: #9fe0b6;
+    --danger: #f2a39b;
+    --success: #9fe0b6;
   }
 }
 
@@ -38,22 +59,39 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
+  --color-banner: var(--banner);
+  --color-banner-foreground: var(--banner-foreground);
+  --color-banner-muted: var(--banner-muted);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-text: var(--gold-text);
+  --color-green-soft: var(--green-soft);
+  --color-green-text: var(--green-text);
+  --color-flag-green: var(--flag-green);
   --color-danger: var(--danger);
   --color-success: var(--success);
   --font-sans: var(--font-geist-sans);
 }
 
-/* Slightly larger base text for comfortable reading on phones. */
-html {
-  font-size: 112.5%;
-}
+/* In the base layer, so classes on individual elements still win. */
+@layer base {
+  /* Slightly larger base text for comfortable reading on phones. */
+  html {
+    font-size: 112.5%;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
 
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
+  a {
+    color: var(--accent);
+    text-underline-offset: 3px;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
 }

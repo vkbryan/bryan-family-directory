@@ -45,7 +45,7 @@ async function AddChildContent() {
             {children.map((child) => (
               <li key={child.id}>
                 <Link href={`/people/${child.id}`} className="flex items-center gap-3 text-foreground no-underline">
-                  <Avatar name={child.fullName} photoUrl={child.photoUrl} />
+                  <Avatar name={child.fullName} photoUrl={child.photoUrl} size="sm" />
                   <span className="font-semibold">{child.fullName}</span>
                 </Link>
               </li>
