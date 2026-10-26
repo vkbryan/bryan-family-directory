@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { SaveState } from "@/components/form-bits";
+import { normalizeState } from "@/lib/places";
 
 // Every action runs as the signed-in person. The database decides whether they
 // may change this profile (their own, a child they guard, or any if admin),
@@ -50,7 +51,7 @@ export async function saveLocation(profileId: string, _prev: SaveState, formData
     .from("profiles")
     .update({
       city: text(formData, "city", 120),
-      state: text(formData, "state", 120),
+      state: normalizeState(text(formData, "state", 120)),
       location_visibility: visibility(formData, "locationVisibility"),
     })
     .eq("id", profileId);

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Button, Notice, TextField } from "@/components/ui";
 import { createMyProfile, type CreateProfileState } from "./actions";
+import { StateSelect } from "@/components/state-select";
 
 export function CreateProfileForm({ branches }: { branches: { id: string; name: string }[] }) {
   const [state, create, pending] = useActionState<CreateProfileState, FormData>(createMyProfile, {});
@@ -41,7 +42,7 @@ export function CreateProfileForm({ branches }: { branches: { id: string; name: 
       )}
       <div className="grid gap-5 sm:grid-cols-2">
         <TextField id="city" name="city" label="City (optional)" autoComplete="address-level2" />
-        <TextField id="state" name="state" label="State (optional)" autoComplete="address-level1" />
+        <StateSelect label="State (optional)" />
       </div>
       <p className="text-sm text-muted">
         You can add a photo, birthday, hobbies and contact details later, and choose who sees them.

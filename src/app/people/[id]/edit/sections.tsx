@@ -5,6 +5,7 @@ import { MONTHS } from "@/lib/directory-logic";
 import { Avatar } from "@/components/avatar";
 import { Button, Notice, TextField } from "@/components/ui";
 import { SaveRow, SectionCard, SelectField, VisibilityChoice, type SaveState } from "@/components/form-bits";
+import { StateSelect } from "@/components/state-select";
 import {
   addInterest,
   removeInterest,
@@ -152,7 +153,7 @@ export function LocationSection({ profile }: { profile: EditableProfile }) {
       <form action={save} className="flex flex-col gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField id="city" name="city" label="City" defaultValue={profile.city ?? ""} autoComplete="address-level2" />
-          <TextField id="state" name="state" label="State" defaultValue={profile.state ?? ""} autoComplete="address-level1" />
+          <StateSelect defaultValue={profile.state} />
         </div>
         <VisibilityChoice name="locationVisibility" value={profile.visibility.location} isChild={profile.isChild} />
         <SaveRow state={state} pending={pending} />
