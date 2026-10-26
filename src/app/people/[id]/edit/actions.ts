@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { SaveState } from "@/components/form-bits";
 import { normalizeState } from "@/lib/places";
+import { splitInterests } from "@/lib/interests";
 
 // Every action runs as the signed-in person. The database decides whether they
 // may change this profile (their own, a child they guard, or any if admin),
@@ -137,16 +138,19 @@ export async function savePhotoVisibility(profileId: string, _prev: SaveState, f
 // --- Interests ------------------------------------------------------------------
 
 export async function addInterest(profileId: string, _prev: SaveState, formData: FormData): Promise<SaveState> {
-  const name = text(formData, "interest", 80);
-  if (!name) return { fieldErrors: { interest: "Type an interest first." } };
+  // Several at once is fine: "hiking, cooking" adds two interests.
+  const names = splitInterests(String(formData.get("interest") ?? "").slice(0, 2000));
+  if (names.length === 0) return { fieldErrors: { interest: "Type an interest first." } };
 
   const supabase = await createClient();
-  const { data: hobbyId, error } = await supabase.rpc("ensure_hobby", { p_name: name });
-  if (error || !hobbyId) return { error: FAILED };
-  const { error: linkError } = await supabase
-    .from("profile_hobbies")
-    .upsert({ profile_id: profileId, hobby_id: hobbyId }, { ignoreDuplicates: true });
-  if (linkError) return { error: FAILED };
+  for (const name of names) {
+    const { data: hobbyId, error } = await supabase.rpc("ensure_hobby", { p_name: name });
+    if (error || !hobbyId) return { error: FAILED };
+    const { error: linkError } = await supabase
+      .from("profile_hobbies")
+      .upsert({ profile_id: profileId, hobby_id: hobbyId }, { ignoreDuplicates: true });
+    if (linkError) return { error: FAILED };
+  }
   refresh();
   return { saved: true };
 }

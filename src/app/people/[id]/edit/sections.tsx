@@ -250,7 +250,8 @@ export function InterestsSection({ profile, suggestions }: { profile: EditablePr
         <TextField
           id="interest"
           name="interest"
-          label="Add an interest"
+          label="Add interests"
+          hint="Add one, or several separated by commas, like: hiking, cooking, gardening"
           list="interest-suggestions"
           autoComplete="off"
           error={state.fieldErrors?.interest}
