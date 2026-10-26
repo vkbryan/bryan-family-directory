@@ -16,6 +16,7 @@ import {
   type EditableProfile,
 } from "./sections";
 import { GuardiansSection } from "./guardians-section";
+import { ParentsSection } from "./parents-section";
 
 export const metadata = { title: "Edit profile · Bryan Family Directory" };
 
@@ -45,7 +46,7 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
   const isChild = p.profile_type === "child";
   const isMe = viewer.profile.id === p.id;
 
-  const [{ data: branches }, { data: allHobbies }, photo, guardians, requests, members] = await Promise.all([
+  const [{ data: branches }, { data: allHobbies }, photo, guardians, requests, members, parentLinks, adults] = await Promise.all([
     supabase.from("family_branches").select("id, name").order("sort_order").order("name"),
     supabase.from("hobbies").select("name").order("name"),
     p.photo_path ? supabase.storage.from("profile-photos").createSignedUrl(p.photo_path, 3600) : null,
@@ -53,6 +54,12 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
     isChild ? supabase.rpc("pending_co_guardian_requests", { p_profile_id: p.id }) : null,
     isChild && viewer.isAdmin
       ? supabase.from("profiles").select("account_id, full_name").not("account_id", "is", null).is("archived_at", null).order("full_name")
+      : null,
+    isChild && viewer.isAdmin
+      ? supabase.from("family_relationships").select("id, person_a, detail").eq("relationship", "parent").eq("person_b", p.id)
+      : null,
+    isChild && viewer.isAdmin
+      ? supabase.from("profiles").select("id, full_name").eq("profile_type", "adult").is("archived_at", null).order("full_name")
       : null,
   ]);
 
@@ -120,6 +127,18 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
           canHandOver={canHandOver}
           isAdmin={viewer.isAdmin}
           members={(members?.data ?? []).map((m) => ({ accountId: m.account_id!, fullName: m.full_name }))}
+        />
+      )}
+      {isChild && viewer.isAdmin && (
+        <ParentsSection
+          childId={p.id}
+          childName={p.aka || p.full_name}
+          parents={(parentLinks?.data ?? []).map((l) => ({
+            id: l.id,
+            name: adults?.data?.find((a) => a.id === l.person_a)?.full_name ?? "A family member",
+            detail: l.detail,
+          }))}
+          adults={(adults?.data ?? []).map((a) => ({ id: a.id, name: a.full_name }))}
         />
       )}
     </div>

@@ -114,6 +114,16 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
             </ul>
           </Detail>
         )}
+        {(person.parents?.length ?? 0) > 0 && (
+          <Detail label={person.parents!.length > 1 ? "Parents" : "Parent"}>
+            <PeopleLinks people={person.parents!} />
+          </Detail>
+        )}
+        {(person.children?.length ?? 0) > 0 && (
+          <Detail label={person.children!.length > 1 ? "Children" : "Child"}>
+            <PeopleLinks people={person.children!} />
+          </Detail>
+        )}
         {birthday && <Detail label="Birthday">{birthday}</Detail>}
         {person.hobbies.length > 0 && (
           <Detail label="Interests">
@@ -231,5 +241,17 @@ function Detail({ label, children }: { label: string; children: ReactNode }) {
       <dt className="text-sm text-muted">{label}</dt>
       <dd className="text-lg">{children}</dd>
     </div>
+  );
+}
+
+function PeopleLinks({ people }: { people: { id: string; name: string }[] }) {
+  return (
+    <ul className="flex flex-col gap-1">
+      {people.map((p) => (
+        <li key={p.id}>
+          <Link href={`/people/${p.id}`}>{p.name}</Link>
+        </li>
+      ))}
+    </ul>
   );
 }

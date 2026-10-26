@@ -112,3 +112,13 @@ describe("labels and links", () => {
     expect(websiteHref("javascript:alert(1)")).toBeNull();
   });
 });
+
+describe("child labels", () => {
+  test("names the recorded parents, or just says Child", async () => {
+    const { childOfLabel } = await import("../../src/lib/directory-logic");
+    expect(childOfLabel([{ name: "Vanessa Bryan" }])).toBe("Vanessa Bryan's child");
+    expect(childOfLabel([{ name: "Pat Example" }, { name: "Sam Example" }])).toBe("Pat Example and Sam Example's child");
+    expect(childOfLabel([])).toBe("Child");
+    expect(childOfLabel(undefined)).toBe("Child");
+  });
+});

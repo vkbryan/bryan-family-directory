@@ -71,3 +71,28 @@ export async function adminAddGuardian(profileId: string, _prev: LinkState, form
   refresh();
   return {};
 }
+
+// --- Family tree links (admins only; the database refuses anyone else) ----------
+// Recording someone as a parent is genealogy only: it grants no editing rights.
+
+const PARENT_KINDS = ["biological", "adoptive", "step", "foster", "unspecified"];
+
+export async function addParentLink(childId: string, _prev: LinkState, formData: FormData): Promise<LinkState> {
+  const parentId = String(formData.get("parentId") ?? "");
+  const detail = String(formData.get("detail") ?? "unspecified");
+  if (!parentId) return { error: "Choose a parent first." };
+  if (!PARENT_KINDS.includes(detail)) return { error: "Choose how they're related." };
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("family_relationships")
+    .insert({ relationship: "parent", person_a: parentId, person_b: childId, detail });
+  if (error) return { error: error.code === "23505" ? "That parent is already recorded." : friendlyError(error) };
+  refresh();
+  return {};
+}
+
+export async function removeParentLink(relationshipId: string) {
+  const supabase = await createClient();
+  await supabase.from("family_relationships").delete().eq("id", relationshipId);
+  refresh();
+}

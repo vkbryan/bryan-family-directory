@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { branchColorClass } from "@/lib/branch-colors";
-import { placeLabel, type Person } from "@/lib/directory-logic";
+import { childOfLabel, placeLabel, type Person } from "@/lib/directory-logic";
 import { Avatar } from "./avatar";
 
 /** One family member in the grid of faces: name, location and branch. The whole card opens their profile. */
 export function PersonCard({ person }: { person: Person }) {
-  const note = person.isMe ? "This is you" : person.isChild ? "Child" : !person.isClaimed ? "Hasn't joined yet" : null;
+  const note = person.isMe ? "This is you" : person.isChild ? childOfLabel(person.parents) : !person.isClaimed ? "Hasn't joined yet" : null;
   const place = placeLabel(person);
   return (
     <Link

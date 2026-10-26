@@ -19,6 +19,9 @@ export type Person = {
   primaryBranchColor?: number;
   branches: { slug: string; name: string; color?: number }[];
   hobbies: { slug: string; name: string }[];
+  /** Recorded parent and child links (genealogy only; they grant no editing rights). */
+  parents?: { id: string; name: string }[];
+  children?: { id: string; name: string }[];
   contactEmail: string | null;
   phone: string | null;
   instagram: string | null;
@@ -176,4 +179,12 @@ export function instagramHref(handle: string) {
 export function phoneHref(phone: string) {
   const digits = phone.replace(/[^\d+]/g, "");
   return digits ? `tel:${digits}` : null;
+}
+
+/** "Vanessa Bryan's child", "Vanessa Bryan and Sam Rivers's child", or "Child" when no parent is recorded. */
+export function childOfLabel(parents: { name: string }[] | undefined) {
+  const names = (parents ?? []).map((p) => p.name);
+  if (names.length === 0) return "Child";
+  const joined = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return `${joined}'s child`;
 }

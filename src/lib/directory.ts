@@ -12,13 +12,18 @@ const PHOTO_LINK_SECONDS = 60 * 60;
  */
 export const getDirectory = cache(async (): Promise<Person[]> => {
   const supabase = await createClient();
-  const [{ data: rows }, { data: branchLinks }, { data: hobbyLinks }, allBranches] = await Promise.all([
+  const [{ data: rows }, { data: branchLinks }, { data: hobbyLinks }, allBranches, { data: parentLinks }] = await Promise.all([
     supabase.rpc("directory_profiles").select("*"),
     supabase.from("profile_branches").select("profile_id, is_primary, family_branches(name)"),
     supabase.from("profile_hobbies").select("profile_id, hobbies(name, slug)"),
     getBranchNames(),
+    supabase.from("family_relationships").select("person_a, person_b").eq("relationship", "parent"),
   ]);
   if (!rows) return [];
+  // Names of everyone this viewer can see, for parent and child links.
+  const nameOf = new Map(rows.map((r) => [r.id, r.full_name]));
+  const linked = (ids: string[]) =>
+    ids.filter((id) => nameOf.has(id)).map((id) => ({ id, name: nameOf.get(id)! })).sort((a, b) => a.name.localeCompare(b.name));
   const branchColor = new Map(allBranches.map((b) => [b.name, b.color]));
 
   // Short-lived private links, one per photo this viewer is allowed to see.
@@ -55,6 +60,8 @@ export const getDirectory = cache(async (): Promise<Person[]> => {
           name: b.family_branches!.name,
           color: branchColor.get(b.family_branches!.name),
         })),
+        parents: linked((parentLinks ?? []).filter((l) => l.person_b === r.id).map((l) => l.person_a)),
+        children: linked((parentLinks ?? []).filter((l) => l.person_a === r.id).map((l) => l.person_b)),
         hobbies: (hobbyLinks ?? [])
           .filter((l) => l.profile_id === r.id && l.hobbies)
           .map((l) => ({ slug: l.hobbies!.slug, name: l.hobbies!.name }))
