@@ -41,6 +41,7 @@ const describe: Record<string, string> = {
   "account.role_set": "changed an account's role",
   "import.airtable": "imported the Airtable records",
   "branches.added": "added family branches",
+  "profiles.states_tidied": "tidied state names (GA and NY written in full)",
 };
 
 async function ActivityContent() {
