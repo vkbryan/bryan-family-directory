@@ -84,11 +84,12 @@ async function PersonContent({ params }: { params: Promise<{ id: string }> }) {
         </div>
       </header>
 
-      {!person.isClaimed && !person.isChild && (
+      {/* Admins only: relatives don't need reminding who hasn't signed up. */}
+      {viewer.isAdmin && !person.isClaimed && !person.isChild && (
         <Card>
           <p>
             {person.fullName.split(" ")[0]} hasn&apos;t joined the directory yet, so this information came from the
-            original family list.
+            original family list. <span className="text-muted">Only admins see this note.</span>
           </p>
         </Card>
       )}

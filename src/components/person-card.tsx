@@ -5,7 +5,7 @@ import { Avatar } from "./avatar";
 
 /** One family member in the grid of faces: name, location and branch. The whole card opens their profile. */
 export function PersonCard({ person }: { person: Person }) {
-  const note = person.isMe ? "This is you" : person.isChild ? childOfLabel(person.parents) : !person.isClaimed ? "Hasn't joined yet" : null;
+  const note = person.isMe ? "This is you" : person.isChild ? childOfLabel(person.parents) : null;
   const place = placeLabel(person);
   return (
     <Link
