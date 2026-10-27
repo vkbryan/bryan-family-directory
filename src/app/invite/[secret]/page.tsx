@@ -5,7 +5,21 @@ import { Button, ButtonLink, Card, Loading } from "@/components/ui";
 import { startFromInvitation } from "./actions";
 import { AcceptButton } from "./accept-button";
 
-export const metadata = { title: "You're invited · Bryan Family Directory" };
+const description = "Find relatives, see birthdays and stay in touch. It takes about a minute.";
+
+// What WhatsApp, iMessage and others show when the link is shared. Kept
+// general: link previews are fetched by those companies' servers.
+export const metadata = {
+  title: "You're invited to the Bryan Family Directory",
+  description,
+  openGraph: {
+    title: "You're invited to the Bryan Family Directory",
+    description,
+    siteName: "The Bryan Family",
+    // Setting openGraph here replaces the inherited picture, so name it again.
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "The Bryan Family: Out of many, one people" }],
+  },
+};
 
 type Preview = {
   status: "valid" | "used" | "expired" | "revoked" | "invalid";
@@ -15,6 +29,7 @@ type Preview = {
   profile_name?: string | null;
   has_photo?: boolean;
   photo_caption?: string | null;
+  member_count?: number | null;
 };
 
 export default function InvitePage({ params }: PageProps<"/invite/[secret]">) {
@@ -60,7 +75,7 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
   }[preview.kind ?? "join"];
 
   const explanation = {
-    join: "It's a private place for our family to find one another, see where relatives live, and stay in touch. Only invited family members can see it.",
+    join: "It's a private place for our family to find one another, see birthdays and where relatives live, and stay in touch.",
     claim: "A profile has been saved for you in the family directory. Sign in to make it yours. You'll decide what to share.",
     co_guardian: "You'll be able to update the child's profile and photo. Other relatives see only what you choose to share.",
   }[preview.kind ?? "join"];
@@ -84,14 +99,22 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
       )}
       <h1 className="text-3xl font-bold">{heading}</h1>
       <p className="text-lg">{explanation}</p>
+      {preview.kind !== "co_guardian" && (preview.member_count ?? 0) >= 2 && (
+        <p className="font-semibold text-green-text">{preview.member_count} relatives are already in the directory.</p>
+      )}
       <Card className="flex flex-col gap-4">
         {signedInMember ? (
           <AcceptButton secret={secret} label={acceptLabel} />
         ) : (
           <>
-            <p>
-              No password needed. Enter your email and we&apos;ll send you a short code.
-            </p>
+            {preview.kind === "join" ? (
+              <p>
+                <strong>It takes about a minute.</strong> All we need is your name; add the rest whenever you like. No
+                password: we&apos;ll email you a short code.
+              </p>
+            ) : (
+              <p>No password needed. Enter your email and we&apos;ll send you a short code.</p>
+            )}
             <form action={startFromInvitation.bind(null, secret)}>
               <Button type="submit">{preview.kind === "claim" ? "Yes, that's me" : "Get started"}</Button>
             </form>

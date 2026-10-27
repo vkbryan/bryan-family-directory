@@ -187,7 +187,19 @@ describe("invitation preview (shown before signing in)", () => {
       profile_name: null,
       has_photo: false,
       photo_caption: null,
+      member_count: 1,
     });
+  });
+
+  test("counts who is in the directory, leaving out archived profiles", async () => {
+    const db = await freshDb();
+    const { secret } = await joinLink(db);
+    await db.profile({ full_name: "Imported Relative" });
+    const archived = await db.profile({ full_name: "Archived Relative" });
+    await db.asSystem();
+    await db.run("update public.profiles set archived_at = now() where id = $1", [archived]);
+    await db.asAnon();
+    expect(await db.value("select public.invitation_preview($1)", [secret])).toMatchObject({ member_count: 2 });
   });
 
   test("a claim invitation names the profile, so the page can ask 'Is this you?'", async () => {
@@ -211,7 +223,7 @@ describe("invitation preview (shown before signing in)", () => {
     await db.as(joiner);
     await db.value("select public.accept_invitation($1)", [secret]);
     await db.asAnon();
-    expect(await db.value("select public.invitation_preview($1)", [secret])).toMatchObject({ status: "used" });
+    expect(await db.value("select public.invitation_preview($1)", [secret])).toMatchObject({ status: "used", member_count: null });
     expect(await db.value("select public.invitation_preview('nope')")).toEqual({ status: "invalid" });
   });
 });

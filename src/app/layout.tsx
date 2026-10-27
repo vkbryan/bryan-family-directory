@@ -13,6 +13,9 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Bryan Family Directory",
   description: "A private directory for the Bryan family.",
+  // Link previews need full addresses for their picture.
+  metadataBase: new URL(process.env.SITE_URL ?? "http://localhost:3000"),
+  openGraph: { siteName: "The Bryan Family", title: "The Bryan Family Directory", description: "A private directory for the Bryan family." },
   robots: { index: false, follow: false },
 };
 

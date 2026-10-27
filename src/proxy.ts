@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Pages anyone can open. Everything else needs a signed-in visitor.
 // This is only a convenience redirect; the database enforces the real rules.
-const publicPaths = ["/", "/sign-in", "/invite"];
+// The link-preview picture must load for WhatsApp and others; it shows no people.
+const publicPaths = ["/", "/sign-in", "/invite", "/opengraph-image"];
 
 function isPublic(pathname: string) {
   return publicPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));

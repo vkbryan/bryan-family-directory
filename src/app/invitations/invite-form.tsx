@@ -26,7 +26,7 @@ export function InviteForm() {
         <ShareLink
           link={state.link}
           heading={`Your invitation link${state.label ? ` for ${state.label}` : ""}:`}
-          message="Join the Bryan Family Directory, our private family directory:"
+          message="You're invited to the Bryan family directory! It takes about a minute, just your name:"
         />
       )}
     </div>
