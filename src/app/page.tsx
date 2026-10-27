@@ -54,7 +54,6 @@ async function HomeContent({ searchParams }: { searchParams: PageProps<"/">["sea
       return (
         <Directory
           name={greetingName(viewer.profile)}
-          isAdmin={viewer.isAdmin}
           filters={readFilters(await searchParams)}
         />
       );
@@ -92,7 +91,7 @@ function StatusCard({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: boolean; filters: Filters }) {
+async function Directory({ name, filters }: { name: string; filters: Filters }) {
   const [everyone, allBranches] = await Promise.all([getDirectory(), getBranchNames()]);
   const results = filterPeople(everyone, filters);
   const filtering = hasFilters(filters);
@@ -190,18 +189,6 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
           </ul>
         )}
       </section>
-
-      <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:flex-wrap">
-        <ButtonLink href="/invitations">Invite a relative</ButtonLink>
-        {isAdmin && (
-          <ButtonLink href="/admin" variant="secondary">
-            Admin
-          </ButtonLink>
-        )}
-        <form action={signOut}>
-          <Button variant="secondary">Sign out</Button>
-        </form>
-      </div>
     </div>
   );
 }

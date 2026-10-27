@@ -5,6 +5,7 @@ import { getViewer } from "@/lib/auth";
 import { getDirectory, getMyGuardedIds } from "@/lib/directory";
 import { Avatar } from "@/components/avatar";
 import { Card, Loading } from "@/components/ui";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { AddChildForm } from "./add-child-form";
 
 export const metadata = { title: "Add a child · Bryan Family Directory" };
@@ -12,9 +13,9 @@ export const metadata = { title: "Add a child · Bryan Family Directory" };
 export default function AddChildPage() {
   return (
     <div className="flex flex-col gap-6">
-      <p>
-        <Link href="/">← Back to the directory</Link>
-      </p>
+      <Suspense fallback={null}>
+        <Crumbs />
+      </Suspense>
       <h1 className="text-3xl font-bold">Add a child</h1>
       <p className="text-lg">
         Children don&apos;t need an email or an account. You&apos;ll manage their profile, and you can add another
@@ -25,6 +26,12 @@ export default function AddChildPage() {
       </Suspense>
     </div>
   );
+}
+
+async function Crumbs() {
+  const viewer = await getViewer();
+  const myProfile = viewer.state === "member" ? `/people/${viewer.profile.id}` : undefined;
+  return <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "My profile", href: myProfile }, { label: "Add a child" }]} />;
 }
 
 async function AddChildContent() {

@@ -22,14 +22,9 @@ export const metadata = { title: "Profile · Bryan Family Directory" };
 
 export default function PersonPage({ params }: PageProps<"/people/[id]">) {
   return (
-    <div className="flex flex-col gap-6">
-      <p>
-        <Link href="/">← Back to the directory</Link>
-      </p>
-      <Suspense fallback={<Loading />}>
-        <PersonContent params={params} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<Loading />}>
+      <PersonContent params={params} />
+    </Suspense>
   );
 }
 

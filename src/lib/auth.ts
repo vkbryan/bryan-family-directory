@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export type Viewer =
@@ -17,7 +18,7 @@ export type Viewer =
  * Who is looking at the page, and how far along they are.
  * Reads the session at request time, so call it inside a <Suspense> boundary.
  */
-export async function getViewer(): Promise<Viewer> {
+export const getViewer = cache(async (): Promise<Viewer> => {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getClaims();
   const userId = auth?.claims?.sub;
@@ -36,7 +37,7 @@ export async function getViewer(): Promise<Viewer> {
   if (!me) return { state: "needs-profile", isAdmin };
 
   return { state: "member", accountId: userId, isAdmin, profile: { id: me.id, fullName: me.full_name, aka: me.aka } };
-}
+});
 
 /** First name or nickname, for greetings. */
 export function greetingName(profile: { fullName: string; aka: string | null }) {

@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ageOn } from "@/lib/age";
 import { Loading } from "@/components/ui";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import {
   BasicsSection,
   BirthdaySection,
@@ -105,9 +105,13 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <p>
-        <Link href={`/people/${p.id}`}>← Back to {isMe ? "your profile" : `${p.full_name}'s profile`}</Link>
-      </p>
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: isMe ? "My profile" : p.full_name, href: `/people/${p.id}` },
+          { label: "Edit" },
+        ]}
+      />
       <div className="flex flex-col gap-1">
         <h1 className="text-3xl font-bold">{isMe ? "Edit your profile" : `Edit ${p.full_name}'s profile`}</h1>
         <p className="text-muted">Every part is optional except a name. Save each section when you&apos;re done with it.</p>

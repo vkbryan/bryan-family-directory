@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { Suspense } from "react";
 import { FamilyBanner } from "@/components/family-banner";
+import { SiteNav } from "@/components/site-nav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         <FamilyBanner />
+        <Suspense fallback={null}>
+          <SiteNav />
+        </Suspense>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</main>
       </body>
     </html>

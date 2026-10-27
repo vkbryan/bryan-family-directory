@@ -22,7 +22,8 @@ No personal details here: relatives are described generally.
    - Decide which sections matter most and put them first; combine overlapping ones (the branch, interest and place chips repeat what the filters already do).
    - Options to weigh: show the family grid sooner, fold the browse chips into the filters or behind a "Browse" toggle, make "Your profile" smaller, keep birthdays short.
    - Sketch two or three layouts to choose from before changing anything.
-   - Done: "Shared interests" removed from the home page (still under More filters and on profiles).
+   - Done: "Shared interests" removed from the home page (still under Advanced search and on profiles); "More filters" renamed "Advanced search".
+   - Done: menu bar under the banner (Home, My profile, + Invite, Admin, Sign out) replaces the bottom buttons and "← Back" links; breadcrumbs on the edit and add-a-child pages.
 4. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up

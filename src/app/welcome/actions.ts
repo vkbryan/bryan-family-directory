@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { friendlyError } from "@/lib/messages";
@@ -22,5 +23,7 @@ export async function createMyProfile(_prev: CreateProfileState, formData: FormD
   });
   if (error) return { error: friendlyError(error) };
 
+  // Re-render the layout as well, so the menu appears now that they have a profile.
+  revalidatePath("/", "layout");
   redirect("/");
 }
