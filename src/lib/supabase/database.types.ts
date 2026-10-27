@@ -720,7 +720,11 @@ export type Database = {
       }
       invitation_photo: {
         Args: { p_secret: string }
-        Returns: { caption: string; content_type: string; image_base64: string }[]
+        Returns: {
+          caption: string
+          content_type: string
+          image_base64: string
+        }[]
       }
       invitation_preview: { Args: { p_secret: string }; Returns: Json }
       is_active_member: { Args: never; Returns: boolean }

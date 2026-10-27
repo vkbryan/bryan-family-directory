@@ -24,7 +24,11 @@ No personal details here: relatives are described generally.
    - Sketch two or three layouts to choose from before changing anything.
    - Done: "Shared interests" removed from the home page (still under Advanced search and on profiles); "More filters" renamed "Advanced search".
    - Done: menu bar under the banner (Home, My profile, + Invite, Admin, Sign out) replaces the bottom buttons and "← Back" links; breadcrumbs on the edit and add-a-child pages.
-4. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
+4. **Getting invitations opened** (5 sent, none joined yet; at least one wasn't even read in WhatsApp)
+   - Done: link preview picture and warmer text; invitation page says "takes about a minute, just your name" and how many relatives are already in; friendlier ready-made text message.
+   - Tip for sending: put the reason and the link in one message, rather than waiting for "sure".
+   - Expiry stays at 14 days for now (decided).
+5. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up
 
