@@ -58,7 +58,7 @@ export function DirectoryFilters({
         aria-controls="more-filters"
         className="self-start py-2 font-medium text-accent underline underline-offset-4"
       >
-        {open ? "Hide filters" : `More filters${activeCount ? ` (${activeCount} on)` : ""}`}
+        {open ? "Hide advanced search" : `Advanced search${activeCount ? ` (${activeCount} on)` : ""}`}
       </button>
 
       <div id="more-filters" hidden={!open} className="grid gap-4 sm:grid-cols-2">
