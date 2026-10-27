@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { Button, ButtonLink, Card, Loading } from "@/components/ui";
-import { startFromInvitation } from "./actions";
+import { ButtonLink, Card, Loading } from "@/components/ui";
+import { SignInForm } from "@/app/sign-in/sign-in-form";
 import { AcceptButton } from "./accept-button";
 
 const description = "Find relatives, see birthdays and stay in touch. It takes about a minute.";
@@ -75,7 +75,7 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
   }[preview.kind ?? "join"];
 
   const explanation = {
-    join: "It's a private place for our family to find one another, see birthdays and where relatives live, and stay in touch.",
+    join: "A private place to find one another, see birthdays and stay in touch.",
     claim: "A profile has been saved for you in the family directory. Sign in to make it yours. You'll decide what to share.",
     co_guardian: "You'll be able to update the child's profile and photo. Other relatives see only what you choose to share.",
   }[preview.kind ?? "join"];
@@ -107,17 +107,8 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
           <AcceptButton secret={secret} label={acceptLabel} />
         ) : (
           <>
-            {preview.kind === "join" ? (
-              <p>
-                <strong>It takes about a minute.</strong> All we need is your name; add the rest whenever you like. No
-                password: we&apos;ll email you a short code.
-              </p>
-            ) : (
-              <p>No password needed. Enter your email and we&apos;ll send you a short code.</p>
-            )}
-            <form action={startFromInvitation.bind(null, secret)}>
-              <Button type="submit">{preview.kind === "claim" ? "Yes, that's me" : "Get started"}</Button>
-            </form>
+            {preview.kind === "join" && <p className="font-semibold">Takes a minute. All we need is your name.</p>}
+            <SignInForm invitation={secret} submitLabel={preview.kind === "claim" ? "Yes, that's me" : "Get started"} />
           </>
         )}
       </Card>

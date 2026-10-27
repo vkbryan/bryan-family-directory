@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { forgetInvitation, readInvitation } from "@/lib/invitation-cookie";
+import { forgetInvitation, readInvitation, rememberInvitation } from "@/lib/invitation-cookie";
 import { friendlyError } from "@/lib/messages";
 
 export type SignInState = {
@@ -25,7 +25,10 @@ async function requestCode(_prev: SignInState, formData: FormData): Promise<Sign
     return { step: "email", email, error: "Please enter a full email address, like name@example.com." };
   }
 
-  const invitation = await readInvitation();
+  // Sent from the invitation page's own email box; otherwise remembered earlier.
+  const fromPage = String(formData.get("invitation") ?? "");
+  if (fromPage) await rememberInvitation(fromPage);
+  const invitation = fromPage || (await readInvitation());
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,

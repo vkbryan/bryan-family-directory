@@ -28,7 +28,7 @@ No personal details here: relatives are described generally.
    - Done: link preview picture and warmer text; invitation page says "takes about a minute, just your name" and how many relatives are already in; friendlier ready-made text message.
    - Tip for sending: put the reason and the link in one message, rather than waiting for "sure".
    - Expiry stays at 14 days for now (decided).
-   - Revisit after a few more invitations: the invitation page is clear but a little wordy. Trim the description and the "takes about a minute" note (e.g. "Takes a minute. Just your name, no password."), and see whether the join rate changes.
+   - Done: invitation page trimmed, and the email box is on the invitation page itself (no hop to the sign-in page).
 5. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up

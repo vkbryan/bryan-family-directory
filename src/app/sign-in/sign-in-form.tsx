@@ -7,13 +7,15 @@ import { signInStep, type SignInState } from "./actions";
 
 const initialState: SignInState = { step: "email", email: "" };
 
-export function SignInForm() {
+/** Email, then code. On an invitation page it carries the invitation along. */
+export function SignInForm({ invitation, submitLabel = "Email me a code" }: { invitation?: string; submitLabel?: string }) {
   const [state, act, pending] = useActionState(signInStep, initialState);
 
   if (state.step === "email") {
     return (
       <form action={act} className="flex flex-col gap-5">
         <input type="hidden" name="intent" value="send" />
+        {invitation && <input type="hidden" name="invitation" value={invitation} />}
         <TextField
           id="email"
           name="email"
@@ -27,7 +29,7 @@ export function SignInForm() {
           error={state.error}
         />
         <Button type="submit" disabled={pending}>
-          {pending ? "Sending…" : "Email me a code"}
+          {pending ? "Sending…" : submitLabel}
         </Button>
       </form>
     );
