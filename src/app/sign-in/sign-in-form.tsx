@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Button, Notice, TextField } from "@/components/ui";
+import { isMicrosoftEmail } from "@/lib/email-providers";
 import { signInStep, type SignInState } from "./actions";
 
 const initialState: SignInState = { step: "email", email: "" };
@@ -35,6 +36,19 @@ export function SignInForm() {
   return (
     <div className="flex flex-col gap-5">
       {state.message && <Notice>{state.message}</Notice>}
+      {isMicrosoftEmail(state.email) && (
+        <div className="flex flex-col gap-2 rounded-lg border-2 border-gold bg-gold-soft p-4 text-gold-text">
+          <p className="font-semibold">Using Hotmail or Outlook?</p>
+          <p>
+            Microsoft sometimes holds back our emails. Look in your <strong>Junk</strong> folder and the{" "}
+            <strong>Other</strong> tab. If nothing arrives within 5 minutes,{" "}
+            <a href="/sign-in" className="text-gold-text">
+              try a different email address
+            </a>
+            , such as Gmail or iCloud.
+          </p>
+        </div>
+      )}
       <form action={act} className="flex flex-col gap-5">
         <input type="hidden" name="intent" value="verify" />
         <TextField

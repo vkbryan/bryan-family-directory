@@ -33,16 +33,20 @@ Authentication → Emails → **Templates**. Edit both **Confirm signup** and
 Subject:
 
 ```
-Your Bryan Family Directory code
+Your sign-in code for the Bryan Family Directory
 ```
 
-Body:
+Body (warmer and fuller than a bare code, which Microsoft's filters treat as
+suspicious; the one link points at our own domain):
 
 ```html
-<h2>Your sign-in code</h2>
-<p>Enter this code to sign in to the Bryan Family Directory:</p>
+<p>Hello,</p>
+<p>Here is your code for signing in to the Bryan Family Directory, our private family website at <a href="https://bryan-family.com">bryan-family.com</a>:</p>
 <p style="font-size:32px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
-<p>The code works for one hour. If you didn't ask for it, you can ignore this email.</p>
+<p>Type it into the sign-in page. It works for one hour and only once.</p>
+<p>Tip: add hello@bryan-family.com to your contacts so these emails always reach your inbox.</p>
+<p>Didn't try to sign in? You can ignore this email. Nobody can get in without the code.</p>
+<p>The Bryan Family Directory<br>Out of many, one people</p>
 ```
 
 ## 3. Invite-only sign-up check
