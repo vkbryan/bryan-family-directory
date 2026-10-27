@@ -21,6 +21,11 @@ export default function MembersPage() {
 
 const statusLabel = { active: "Active", pending: "Signed in, not connected", deactivated: "Deactivated" };
 
+/** A pending account that never signed in asked for a code and never typed it in: worth a nudge. */
+function accountStatus(a: { status: keyof typeof statusLabel; last_sign_in_at: string | null }) {
+  return a.status === "pending" && !a.last_sign_in_at ? "Asked for a code, never entered it" : statusLabel[a.status];
+}
+
 async function MembersContent() {
   const viewer = await requireAdminViewer();
   const supabase = await createClient();
@@ -59,7 +64,7 @@ async function MembersContent() {
                     </p>
                     <p className="break-all text-sm">{a.email}</p>
                     <p className="text-sm text-muted">
-                      {statusLabel[a.status]} · joined {formatDate(a.created_at)} · last signed in {formatDate(a.last_sign_in_at)}
+                      {accountStatus(a)} · joined {formatDate(a.created_at)} · last signed in {formatDate(a.last_sign_in_at)}
                     </p>
                   </div>
                   {!isMe && (

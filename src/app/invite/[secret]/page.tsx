@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -103,7 +104,13 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
         <p className="font-semibold text-green-text">{preview.member_count} relatives are already in the directory.</p>
       )}
       <Card className="flex flex-col gap-4">
-        {signedInMember ? (
+        {viewer.state === "member" && preview.kind === "join" ? (
+          // Accepting would use up a newcomer's link without adding anyone.
+          <p>
+            This invitation is for someone new. You&apos;re already a member, so pass the link along to them.{" "}
+            <Link href="/">Go to the directory</Link>.
+          </p>
+        ) : signedInMember ? (
           <AcceptButton secret={secret} label={acceptLabel} />
         ) : (
           <>

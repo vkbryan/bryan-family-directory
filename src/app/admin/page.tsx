@@ -39,7 +39,7 @@ async function AdminSummary() {
   const tiles = [
     { href: "/admin/requests", label: "Requests waiting for you", value: requests, highlight: requests > 0 },
     { href: "/admin/members", label: "Active members", value: active },
-    { href: "/admin/members", label: "Signed in but not connected", value: pending },
+    { href: "/admin/members", label: "Started joining, didn't finish", value: pending },
     { href: "/admin/members", label: "Invitation links waiting", value: waiting },
     { href: "/admin/claims", label: "Profiles not yet claimed", value: unclaimed },
     { href: "/", label: "Profiles in the directory", value: profiles?.length ?? 0 },
