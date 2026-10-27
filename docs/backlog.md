@@ -15,8 +15,7 @@ No personal details here: relatives are described generally.
    - Checked Resend → Emails: both codes "Delivered" within the same minute, nothing after, so Microsoft accepted them and filtered them out of sight (Resend isn't blocking the address). Resend's Insights pass every check except one suggestion: "Use a subdomain".
    - Before sending emailed invitations in bulk, send sign-in codes from a subdomain (e.g. `login.bryan-family.com`) so bulk mail can't drag down the codes' reputation.
    - Set up hello@ forwarding to the admin's Gmail (adds MX records, which also helps deliverability).
-   - Hint on the code screen: "Using Hotmail or Outlook? Check Junk, add bryan-family.com to Safe senders, or use another email."
-   - Friendlier sign-in email text (a bare code can look like spam to Microsoft).
+   - Done: Hotmail/Outlook hint on the code screen; friendlier sign-in email text (in `docs/supabase-setup.md`, pasted into Supabase's templates).
    - Optional: admin-assisted sign-in code for relatives who can't receive email (needs the Supabase secret key kept only on the admin's Mac).
 3. **Reorganize and consolidate the home page** (it feels too busy)
    - Today, top to bottom: greeting and count, "Your profile" card, search and filters, birthdays, browse by branch, shared interests, where we live, everyone, then the invite/admin/sign-out buttons.
