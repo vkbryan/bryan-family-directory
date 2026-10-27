@@ -107,8 +107,7 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
           <AcceptButton secret={secret} label={acceptLabel} />
         ) : (
           <>
-            {preview.kind === "join" && <p className="font-semibold">Takes a minute. All we need is your name.</p>}
-            <SignInForm invitation={secret} submitLabel={preview.kind === "claim" ? "Yes, that's me" : "Get started"} />
+            <SignInForm invitation={secret} submitLabel={preview.kind === "claim" ? "Yes, that's me" : "Send code"} />
           </>
         )}
       </Card>
