@@ -11,10 +11,18 @@ No personal details here: relatives are described generally.
    - An admin approves each with one tap on the Admin home; until then they see nothing.
    - **Pre-approved email list:** relatives whose email is on the list skip approval. The list is stored privately (admins only). Load it from a file in `private-data/`, never pasted in chat.
 2. **Hotmail / Outlook sign-in emails** (a pilot relative never received her code)
+   - Findings (Oct 27): the email records are correct (DKIM signed by Resend, DMARC passes). Likely causes: the domain was only 3 days old when she tried (Microsoft is hardest on new domains), the domain has no mailbox (no MX record), so replies can't be received, and the email is a bare code with little text.
+   - First check Resend → Emails for her address: "Delivered" means Microsoft accepted it and filtered it; "Bounced" or "Suppressed" means Resend now blocks that address until it's removed from the suppression list.
+   - Set up hello@ forwarding to the admin's Gmail (adds MX records, which also helps deliverability).
    - Hint on the code screen: "Using Hotmail or Outlook? Check Junk, add bryan-family.com to Safe senders, or use another email."
    - Friendlier sign-in email text (a bare code can look like spam to Microsoft).
    - Optional: admin-assisted sign-in code for relatives who can't receive email (needs the Supabase secret key kept only on the admin's Mac).
-3. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
+3. **Reorganize and consolidate the home page** (it feels too busy)
+   - Today, top to bottom: greeting and count, "Your profile" card, search and filters, birthdays, browse by branch, shared interests, where we live, everyone, then the invite/admin/sign-out buttons.
+   - Decide which sections matter most and put them first; combine overlapping ones (the branch, interest and place chips repeat what the filters already do).
+   - Options to weigh: show the family grid sooner, fold the browse chips into the filters or behind a "Browse" toggle, make "Your profile" smaller, keep birthdays short.
+   - Sketch two or three layouts to choose from before changing anything.
+4. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up
 
