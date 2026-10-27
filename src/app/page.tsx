@@ -162,11 +162,6 @@ async function Directory({ name, isAdmin, filters }: { name: string; isAdmin: bo
               colorFor={(slug) => branchColorClass(allBranches.find((b) => b.slug === slug)?.color)}
             />
           </Section>
-          {hobbies.length > 0 && (
-            <Section title="Shared interests">
-              <ChipList items={hobbies} href={(slug) => filterHref(filters, { hobby: slug })} />
-            </Section>
-          )}
           {places.length > 0 && (
             <Section title="Where we live">
               <ChipList items={places} href={(state) => filterHref(filters, { state })} />
