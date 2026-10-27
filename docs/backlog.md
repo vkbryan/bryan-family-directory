@@ -12,7 +12,8 @@ No personal details here: relatives are described generally.
    - **Pre-approved email list:** relatives whose email is on the list skip approval. The list is stored privately (admins only). Load it from a file in `private-data/`, never pasted in chat.
 2. **Hotmail / Outlook sign-in emails** (a pilot relative never received her code)
    - Findings (Oct 27): the email records are correct (DKIM signed by Resend, DMARC passes). Likely causes: the domain was only 3 days old when she tried (Microsoft is hardest on new domains), the domain has no mailbox (no MX record), so replies can't be received, and the email is a bare code with little text.
-   - First check Resend → Emails for her address: "Delivered" means Microsoft accepted it and filtered it; "Bounced" or "Suppressed" means Resend now blocks that address until it's removed from the suppression list.
+   - Checked Resend → Emails: both codes "Delivered" within the same minute, nothing after, so Microsoft accepted them and filtered them out of sight (Resend isn't blocking the address). Resend's Insights pass every check except one suggestion: "Use a subdomain".
+   - Before sending emailed invitations in bulk, send sign-in codes from a subdomain (e.g. `login.bryan-family.com`) so bulk mail can't drag down the codes' reputation.
    - Set up hello@ forwarding to the admin's Gmail (adds MX records, which also helps deliverability).
    - Hint on the code screen: "Using Hotmail or Outlook? Check Junk, add bryan-family.com to Safe senders, or use another email."
    - Friendlier sign-in email text (a bare code can look like spam to Microsoft).
