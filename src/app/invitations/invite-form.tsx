@@ -14,8 +14,10 @@ export function InviteForm() {
         <TextField
           id="label"
           name="label"
-          label="Who is this for? (optional)"
-          hint="Just a reminder for you, like “Cousin Robin”. They'll see it on the invitation."
+          label="Who is this for?"
+          hint="Their name, so you can see who has joined. Only you see this."
+          required
+          error={state.labelError}
         />
         <Button type="submit" disabled={pending}>
           {pending ? "Making link…" : "Make an invitation link"}
