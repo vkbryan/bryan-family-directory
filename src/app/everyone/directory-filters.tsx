@@ -31,7 +31,7 @@ export function DirectoryFilters({
   const [open, setOpen] = useState(activeCount > 0);
 
   return (
-    <Form action="/" className="flex flex-col gap-4" role="search">
+    <Form action="/everyone" className="flex flex-col gap-4" role="search">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="q" className="font-medium">
           Search by name or nickname
@@ -76,7 +76,7 @@ export function DirectoryFilters({
 
       {(activeCount > 0 || filters.q) && (
         <p>
-          <Link href="/">Clear search and filters</Link>
+          <Link href="/everyone">Clear search and filters</Link>
         </p>
       )}
     </Form>

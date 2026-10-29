@@ -3,6 +3,7 @@ import {
   filterHref,
   filterPeople,
   initials,
+  newestFirst,
   readFilters,
   tally,
   upcomingBirthdays,
@@ -68,8 +69,8 @@ describe("searching and filtering", () => {
   });
 
   test("filter links keep the other filters", () => {
-    expect(filterHref({ ...none, branch: "branch-a" }, { hobby: "gardening" })).toBe("/?branch=branch-a&hobby=gardening");
-    expect(filterHref({ ...none, branch: "branch-a" }, { branch: "" })).toBe("/");
+    expect(filterHref({ ...none, branch: "branch-a" }, { hobby: "gardening" })).toBe("/everyone?branch=branch-a&hobby=gardening");
+    expect(filterHref({ ...none, branch: "branch-a" }, { branch: "" })).toBe("/everyone");
   });
 
   test("counts for browsing, most common first", () => {
@@ -120,5 +121,16 @@ describe("child labels", () => {
     expect(childOfLabel([{ name: "Pat Example" }, { name: "Sam Example" }])).toBe("Pat Example and Sam Example's child");
     expect(childOfLabel([])).toBe("Child");
     expect(childOfLabel(undefined)).toBe("Child");
+  });
+});
+
+describe("newest first", () => {
+  test("most recently added first, limited to the count", () => {
+    const people = [
+      person({ fullName: "Old", addedAt: "2026-10-01T00:00:00Z" }),
+      person({ fullName: "Newest", addedAt: "2026-10-28T00:00:00Z" }),
+      person({ fullName: "Middle", addedAt: "2026-10-15T00:00:00Z" }),
+    ];
+    expect(newestFirst(people, 2).map((p) => p.fullName)).toEqual(["Newest", "Middle"]);
   });
 });

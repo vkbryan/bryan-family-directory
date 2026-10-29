@@ -1,24 +1,15 @@
+import Form from "next/form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { getViewer, greetingName } from "@/lib/auth";
 import { getBranchNames, getDirectory } from "@/lib/directory";
-import {
-  filterHref,
-  filterPeople,
-  hasFilters,
-  readFilters,
-  tally,
-  upcomingBirthdays,
-  whenLabel,
-  type Filters,
-} from "@/lib/directory-logic";
+import { filterHref, hasFilters, newestFirst, readFilters, tally, upcomingBirthdays, whenLabel } from "@/lib/directory-logic";
 import { Avatar } from "@/components/avatar";
 import { PersonCard } from "@/components/person-card";
 import { YourProfileCard } from "@/components/your-profile-card";
 import { branchColorClass } from "@/lib/branch-colors";
 import { Button, ButtonLink, Card, Loading } from "@/components/ui";
-import { DirectoryFilters } from "./directory-filters";
 import { signOut } from "./actions";
 
 export default function Home({ searchParams }: PageProps<"/">) {
@@ -50,13 +41,12 @@ async function HomeContent({ searchParams }: { searchParams: PageProps<"/">["sea
           If you think this is a mistake, contact a family admin.
         </StatusCard>
       );
-    case "member":
-      return (
-        <Directory
-          name={greetingName(viewer.profile)}
-          filters={readFilters(await searchParams)}
-        />
-      );
+    case "member": {
+      // Searches used to live here; old links now open the Everyone page.
+      const params = await searchParams;
+      if (hasFilters(readFilters(params))) redirect(`/everyone?${new URLSearchParams(params as Record<string, string>)}`);
+      return <Directory name={greetingName(viewer.profile)} />;
+    }
   }
 }
 
@@ -91,23 +81,16 @@ function StatusCard({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-async function Directory({ name, filters }: { name: string; filters: Filters }) {
-  const [everyone, allBranches] = await Promise.all([getDirectory(), getBranchNames()]);
-  const results = filterPeople(everyone, filters);
-  const filtering = hasFilters(filters);
+const NEWEST_COUNT = 12;
 
-  // Options for the filters, from what this viewer can see.
-  const states = [...new Set(everyone.map((p) => p.state).filter(Boolean))].sort() as string[];
-  const cities = [
-    ...new Set(
-      everyone.filter((p) => p.city && (!filters.state || p.state === filters.state)).map((p) => p.city),
-    ),
-  ].sort() as string[];
-  const hobbies = tally(everyone.flatMap((p) => p.hobbies));
+async function Directory({ name }: { name: string }) {
+  const [everyone, allBranches] = await Promise.all([getDirectory(), getBranchNames()]);
   const branches = tally(everyone.flatMap((p) => p.branches));
   const places = tally(everyone.filter((p) => p.state).map((p) => ({ slug: p.state!, name: p.state! })));
   const birthdays = upcomingBirthdays(everyone, new Date());
   const me = everyone.find((p) => p.isMe);
+  const newest = newestFirst(everyone, NEWEST_COUNT);
+  const noFilters = readFilters({});
 
   return (
     <div className="flex flex-col gap-8">
@@ -120,83 +103,82 @@ async function Directory({ name, filters }: { name: string; filters: Filters }) 
 
       {me && <YourProfileCard me={me} />}
 
-      <DirectoryFilters
-        key={JSON.stringify(filters)}
-        filters={filters}
-        branches={allBranches.map((b) => ({ value: b.slug, label: b.name }))}
-        states={states.map((s) => ({ value: s, label: s }))}
-        cities={cities.map((c) => ({ value: c, label: c }))}
-        hobbies={hobbies.map((h) => ({ value: h.slug, label: h.name }))}
-      />
+      <Form action="/everyone" className="flex flex-col gap-1.5" role="search">
+        <label htmlFor="q" className="font-medium">
+          Search by name or nickname
+        </label>
+        <div className="flex gap-2">
+          <input
+            id="q"
+            name="q"
+            type="search"
+            autoComplete="off"
+            className="min-h-12 min-w-0 flex-1 rounded-lg border border-border bg-surface px-4 py-3 text-base text-foreground"
+          />
+          <Button type="submit" className="!w-auto">
+            Search
+          </Button>
+        </div>
+      </Form>
 
-      {!filtering && (
-        <>
-          {birthdays.length > 0 && (
-            <Section title="Birthdays in the next 30 days">
-              <ul className="grid gap-3 sm:grid-cols-2">
-                {birthdays.map(({ person, daysAway, turning }) => (
-                  <li key={person.id}>
-                    <Link
-                      href={`/people/${person.id}`}
-                      className="flex items-center gap-3 rounded-xl bg-gold-soft p-3 text-gold-text no-underline"
-                    >
-                      <Avatar name={person.fullName} photoUrl={person.photoUrl} size="sm" />
-                      <span>
-                        <span className="font-semibold">{person.aka || person.fullName}</span>
-                        <span className="block text-sm">
-                          {whenLabel(daysAway)}
-                          {turning !== null && !person.isChild ? ` · turning ${turning}` : ""}
-                        </span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-          <Section title="Browse by family branch">
-            <ChipList
-              items={branches}
-              href={(slug) => filterHref(filters, { branch: slug })}
-              colorFor={(slug) => branchColorClass(allBranches.find((b) => b.slug === slug)?.color)}
-            />
-          </Section>
-          {places.length > 0 && (
-            <Section title="Where we live">
-              <ChipList items={places} href={(state) => filterHref(filters, { state })} />
-            </Section>
-          )}
-        </>
-      )}
-
-      <section aria-labelledby="results-heading" className="flex flex-col gap-4">
-        <h2 id="results-heading" className="text-xl font-semibold" aria-live="polite">
-          {filtering ? resultsLabel(results.length, filters, allBranches) : "Everyone"}
-        </h2>
-        {results.length === 0 ? (
-          <Card>
-            <p>
-              Nobody matches yet. Try fewer filters, or <Link href="/">see everyone</Link>.
-            </p>
-          </Card>
-        ) : (
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {results.map((person) => (
+      {birthdays.length > 0 && (
+        <Section title="Birthdays in the next 30 days">
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {birthdays.map(({ person, daysAway, turning }) => (
               <li key={person.id}>
-                <PersonCard person={person} />
+                <Link
+                  href={`/people/${person.id}`}
+                  className="flex items-center gap-3 rounded-xl bg-gold-soft p-3 text-gold-text no-underline"
+                >
+                  <Avatar name={person.fullName} photoUrl={person.photoUrl} size="sm" />
+                  <span>
+                    <span className="font-semibold">{person.aka || person.fullName}</span>
+                    <span className="block text-sm">
+                      {whenLabel(daysAway)}
+                      {turning !== null && !person.isChild ? ` · turning ${turning}` : ""}
+                    </span>
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
+        </Section>
+      )}
+      <Section title="Browse by family branch">
+        <ChipList
+          items={branches}
+          href={(slug) => filterHref(noFilters, { branch: slug })}
+          colorFor={(slug) => branchColorClass(allBranches.find((b) => b.slug === slug)?.color)}
+        />
+      </Section>
+      {places.length > 0 && (
+        <Section title="Where we live">
+          <ChipList items={places} href={(state) => filterHref(noFilters, { state })} />
+        </Section>
+      )}
+
+      <section aria-labelledby="newest-heading" className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 id="newest-heading" className="text-xl font-semibold">
+            <Link href="/everyone">Everyone ›</Link>
+          </h2>
+          <p className="text-muted">Newest in the directory</p>
+        </div>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {newest.map((person) => (
+            <li key={person.id}>
+              <PersonCard person={person} />
+            </li>
+          ))}
+        </ul>
+        {everyone.length > newest.length && (
+          <ButtonLink href="/everyone" variant="secondary">
+            See all {everyone.length}
+          </ButtonLink>
         )}
       </section>
     </div>
   );
-}
-
-function resultsLabel(count: number, filters: Filters, branches: { slug: string; name: string }[]) {
-  const branch = branches.find((b) => b.slug === filters.branch)?.name;
-  const base = `${count} ${count === 1 ? "match" : "matches"}`;
-  return branch ? `${base} in ${branch}` : base;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

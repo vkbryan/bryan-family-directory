@@ -71,6 +71,7 @@ export const getDirectory = cache(async (): Promise<Person[]> => {
         instagram: r.instagram,
         linkedin: r.linkedin,
         website: r.website,
+        addedAt: r.created_at,
       };
     })
     .sort(byName);

@@ -709,6 +709,7 @@ export type Database = {
           photo_path: string
           profile_type: Database["public"]["Enums"]["profile_type"]
           state: string
+          created_at: string
           updated_at: string
           website: string
         }[]

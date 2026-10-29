@@ -27,6 +27,8 @@ export type Person = {
   instagram: string | null;
   linkedin: string | null;
   website: string | null;
+  /** When the profile was added to the directory. */
+  addedAt?: string;
 };
 
 export type Filters = {
@@ -156,7 +158,7 @@ export function filterHref(current: Filters, change: Partial<Filters>) {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(next)) if (value) params.set(key, value);
   const query = params.toString();
-  return query ? `/?${query}` : "/";
+  return query ? `/everyone?${query}` : "/everyone";
 }
 
 /** A safe link for a personal website (only http/https). */
@@ -187,4 +189,9 @@ export function childOfLabel(parents: { name: string }[] | undefined) {
   if (names.length === 0) return "Child";
   const joined = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
   return `${joined}'s child`;
+}
+
+/** The most recently added profiles, newest first. */
+export function newestFirst(people: Person[], count: number) {
+  return [...people].sort((a, b) => (b.addedAt ?? "").localeCompare(a.addedAt ?? "")).slice(0, count);
 }

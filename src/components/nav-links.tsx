@@ -7,7 +7,7 @@ import { signOut } from "@/app/actions";
 const link = "inline-flex min-h-11 items-center border-b-2 font-medium no-underline";
 
 /**
- * Home, My profile, Invite (as a gold pill) and, for admins, Admin; Sign out
+ * Home, Everyone, My profile, Invite (as a gold pill) and, for admins, Admin; Sign out
  * sits apart on the right. The page you're on is underlined.
  */
 export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmin: boolean }) {
@@ -15,6 +15,7 @@ export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmi
   const myProfile = `/people/${myProfileId}`;
   const items = [
     { href: "/", label: "Home", current: path === "/" },
+    { href: "/everyone", label: "Everyone", current: path === "/everyone" },
     { href: myProfile, label: "My profile", current: path === myProfile || path.startsWith(`${myProfile}/`) || path === "/children/new" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin", current: path.startsWith("/admin") }] : []),
   ];
@@ -22,7 +23,7 @@ export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmi
   return (
     <nav aria-label="Main" className="border-b border-border">
       <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-3 px-4 sm:gap-x-6">
-        {items.slice(0, 2).map((item) => (
+        {items.slice(0, 3).map((item) => (
           <NavLink key={item.href} {...item} />
         ))}
         <Link
@@ -32,7 +33,7 @@ export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmi
         >
           + Invite
         </Link>
-        {items.slice(2).map((item) => (
+        {items.slice(3).map((item) => (
           <NavLink key={item.href} {...item} />
         ))}
         <form action={signOut} className="ml-auto">
