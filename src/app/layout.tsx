@@ -32,6 +32,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteNav />
         </Suspense>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</main>
+        <footer className="mx-auto w-full max-w-3xl px-4 pb-8 text-center text-sm text-muted">
+          © 2026 Bryan Family Directory · Made by VeeKayBee
+        </footer>
       </body>
     </html>
   );
