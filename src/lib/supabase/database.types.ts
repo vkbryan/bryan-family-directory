@@ -698,6 +698,7 @@ export type Database = {
           can_edit: boolean
           city: string
           contact_email: string
+          created_at: string
           full_name: string
           id: string
           instagram: string
@@ -709,7 +710,6 @@ export type Database = {
           photo_path: string
           profile_type: Database["public"]["Enums"]["profile_type"]
           state: string
-          created_at: string
           updated_at: string
           website: string
         }[]
