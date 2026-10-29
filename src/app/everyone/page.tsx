@@ -39,12 +39,7 @@ async function Everyone({ searchParams }: { searchParams: PageProps<"/everyone">
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">Everyone</h1>
-        <p className="text-muted">
-          {everyone.length} family {everyone.length === 1 ? "member" : "members"} in the directory
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold">Everyone</h1>
 
       <DirectoryFilters
         key={JSON.stringify(filters)}
@@ -56,8 +51,9 @@ async function Everyone({ searchParams }: { searchParams: PageProps<"/everyone">
       />
 
       <section aria-labelledby="results-heading" className="flex flex-col gap-4">
-        <h2 id="results-heading" className="text-xl font-semibold" aria-live="polite">
-          {filtering ? resultsLabel(results.length, filters, allBranches) : "A to Z"}
+        {/* Screen readers still hear a heading when nothing is filtered. */}
+        <h2 id="results-heading" className={filtering ? "text-xl font-semibold" : "sr-only"} aria-live="polite">
+          {filtering ? resultsLabel(results.length, filters, allBranches) : "All family members"}
         </h2>
         {results.length === 0 ? (
           <Card>
