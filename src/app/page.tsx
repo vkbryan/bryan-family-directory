@@ -159,12 +159,9 @@ async function Directory({ name }: { name: string }) {
       )}
 
       <section aria-labelledby="newest-heading" className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 id="newest-heading" className="text-xl font-semibold">
-            <Link href="/everyone">Everyone ›</Link>
-          </h2>
-          <p className="text-muted">Newest in the directory</p>
-        </div>
+        <h2 id="newest-heading" className="text-xl font-semibold">
+          <Link href="/everyone">Everyone ›</Link>
+        </h2>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {newest.map((person) => (
             <li key={person.id}>
