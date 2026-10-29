@@ -104,7 +104,7 @@ async function Directory({ name }: { name: string }) {
       {me && <YourProfileCard me={me} />}
 
       <Form action="/everyone" className="flex flex-col gap-1.5" role="search">
-        <label htmlFor="q" className="font-medium">
+        <label htmlFor="q" className="sr-only">
           Search by name or nickname
         </label>
         <div className="flex gap-2">
@@ -112,8 +112,9 @@ async function Directory({ name }: { name: string }) {
             id="q"
             name="q"
             type="search"
+            placeholder="Name or nickname"
             autoComplete="off"
-            className="min-h-12 min-w-0 flex-1 rounded-lg border border-border bg-surface px-4 py-3 text-base text-foreground"
+            className="min-h-12 min-w-0 flex-1 rounded-lg border border-border bg-surface px-4 py-3 text-base text-foreground placeholder:text-muted"
           />
           <Button type="submit" className="!w-auto">
             Search
