@@ -24,6 +24,8 @@ No personal details here: relatives are described generally.
    - Sketch two or three layouts to choose from before changing anything.
    - Done: "Shared interests" removed from the home page (still under Advanced search and on profiles); "More filters" renamed "Advanced search".
    - Done: menu bar under the banner (Home, My profile, + Invite, Admin, Sign out) replaces the bottom buttons and "← Back" links; breadcrumbs on the edit and add-a-child pages.
+   - Done: "Everyone" page in the menu, with search, Advanced search and every tile; the home page shows the 12 newest profiles and a simple search box that opens Everyone; site footer.
+   - Open: on phones a relative's menu wraps "Sign out" to a second line (a shorter "My profile" label would fix it).
 4. **Getting invitations opened** (5 sent, none joined yet; at least one wasn't even read in WhatsApp)
    - Done: link preview picture and warmer text; invitation page says "takes about a minute, just your name" and how many relatives are already in; friendlier ready-made text message.
    - Tip for sending: put the reason and the link in one message, rather than waiting for "sure".
