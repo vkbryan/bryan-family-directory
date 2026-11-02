@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { forgetInvitation, readInvitation, rememberInvitation } from "@/lib/invitation-cookie";
+import { forgetPendingEmail, rememberPendingEmail } from "@/lib/pending-sign-in";
 import { friendlyError } from "@/lib/messages";
 
 export type SignInState = {
@@ -16,7 +17,16 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** One action for both steps, so the form keeps a single state. */
 export async function signInStep(prev: SignInState, formData: FormData): Promise<SignInState> {
-  return formData.get("intent") === "verify" ? verifyCode(prev, formData) : requestCode(prev, formData);
+  switch (formData.get("intent")) {
+    case "verify":
+      return verifyCode(prev, formData);
+    case "restart":
+      // A different email address: forget the one waiting for a code.
+      await forgetPendingEmail();
+      return { step: "email", email: "" };
+    default:
+      return requestCode(prev, formData);
+  }
 }
 
 async function requestCode(_prev: SignInState, formData: FormData): Promise<SignInState> {
@@ -52,6 +62,7 @@ async function requestCode(_prev: SignInState, formData: FormData): Promise<Sign
     // either way, so the page never reveals who is a member.
   }
 
+  await rememberPendingEmail(email);
   return {
     step: "code",
     email,
@@ -77,6 +88,7 @@ async function verifyCode(prev: SignInState, formData: FormData): Promise<SignIn
     };
   }
 
+  await forgetPendingEmail();
   const invitation = await readInvitation();
   if (!invitation) redirect("/");
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { readPendingEmail } from "@/lib/pending-sign-in";
 import { ButtonLink, Card, Loading } from "@/components/ui";
 import { SignInForm } from "@/app/sign-in/sign-in-form";
 import { AcceptButton } from "./accept-button";
@@ -45,9 +46,10 @@ export default function InvitePage({ params }: PageProps<"/invite/[secret]">) {
 async function InviteContent({ params }: { params: Promise<{ secret: string }> }) {
   const { secret } = await params;
   const supabase = await createClient();
-  const [{ data }, viewer] = await Promise.all([
+  const [{ data }, viewer, waitingFor] = await Promise.all([
     supabase.rpc("invitation_preview", { p_secret: secret }),
     getViewer(),
+    readPendingEmail(),
   ]);
   const preview = (data ?? { status: "invalid" }) as Preview;
 
@@ -120,7 +122,11 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
           <AcceptButton secret={secret} label={acceptLabel} />
         ) : (
           <>
-            <SignInForm invitation={secret} submitLabel={preview.kind === "claim" ? "Yes, that's me" : "Send code"} />
+            <SignInForm
+              invitation={secret}
+              submitLabel={preview.kind === "claim" ? "Yes, that's me" : "Send code"}
+              waitingFor={waitingFor}
+            />
           </>
         )}
       </Card>

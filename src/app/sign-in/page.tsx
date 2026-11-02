@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { readInvitation } from "@/lib/invitation-cookie";
+import { readPendingEmail } from "@/lib/pending-sign-in";
 import { Card, Loading } from "@/components/ui";
 import { SignInForm } from "./sign-in-form";
 
@@ -19,13 +20,13 @@ export default function SignInPage() {
 }
 
 async function SignInContent() {
-  const [viewer, invitation] = await Promise.all([getViewer(), readInvitation()]);
+  const [viewer, invitation, waitingFor] = await Promise.all([getViewer(), readInvitation(), readPendingEmail()]);
   // Already signed in and nothing left to accept: nothing to do here.
   if (viewer.state !== "signed-out" && !invitation) redirect("/");
 
   return (
     <Card>
-      <SignInForm />
+      <SignInForm waitingFor={waitingFor} />
     </Card>
   );
 }

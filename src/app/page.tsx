@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { getViewer, greetingName } from "@/lib/auth";
+import { readPendingEmail } from "@/lib/pending-sign-in";
+import { SignInForm } from "@/app/sign-in/sign-in-form";
 import { getBranchNames, getDirectory } from "@/lib/directory";
 import { filterHref, hasFilters, newestFirst, readFilters, tally, upcomingBirthdays, whenLabel } from "@/lib/directory-logic";
 import { Avatar } from "@/components/avatar";
@@ -25,7 +27,7 @@ async function HomeContent({ searchParams }: { searchParams: PageProps<"/">["sea
 
   switch (viewer.state) {
     case "signed-out":
-      return <Welcome />;
+      return <Welcome waitingFor={await readPendingEmail()} />;
     case "needs-profile":
       redirect("/welcome");
     case "pending":
@@ -50,7 +52,18 @@ async function HomeContent({ searchParams }: { searchParams: PageProps<"/">["sea
   }
 }
 
-function Welcome() {
+function Welcome({ waitingFor }: { waitingFor: string | null }) {
+  // Came back while a code is on its way: go straight to typing it.
+  if (waitingFor) {
+    return (
+      <div className="flex flex-col gap-6">
+        <h1 className="text-3xl font-bold">Welcome back</h1>
+        <Card>
+          <SignInForm waitingFor={waitingFor} />
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-3xl font-bold">Welcome</h1>
