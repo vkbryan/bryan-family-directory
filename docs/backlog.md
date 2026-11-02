@@ -5,11 +5,10 @@ No personal details here: relatives are described generally.
 
 ## Next up
 
-1. **WhatsApp group link with quick approval** (decided)
-   - One link for the family group chat, with an expiry and a cap on sign-ups; can be cancelled anytime.
-   - New people sign in with an email code and fill in name, nickname, branch and city.
-   - An admin approves each with one tap on the Admin home; until then they see nothing.
-   - **Pre-approved email list:** relatives whose email is on the list skip approval. The list is stored privately (admins only). Load it from a file in `private-data/`, never pasted in chat.
+1. **WhatsApp group link** (built Nov 2)
+   - Done: Admin → Group link makes one link for the family chat: up to 50 people, 14 days, cancel anytime. New people join straight away (decided: no approval step). Shown once, with Copy and Share on WhatsApp.
+   - Watch Admin → Members after sharing; if the link spreads beyond the family, cancel it and deactivate anyone who shouldn't be there.
+   - Later, if needed: approval step or a pre-approved email list (stored privately, loaded from `private-data/`, never pasted in chat).
 2. **Hotmail / Outlook sign-in emails** (a pilot relative never received her code)
    - Findings (Oct 27): the email records are correct (DKIM signed by Resend, DMARC passes). Likely causes: the domain was only 3 days old when she tried (Microsoft is hardest on new domains), the domain has no mailbox (no MX record), so replies can't be received, and the email is a bare code with little text.
    - Checked Resend → Emails: both codes "Delivered" within the same minute, nothing after, so Microsoft accepted them and filtered them out of sight (Resend isn't blocking the address). Resend's Insights pass every check except one suggestion: "Use a subdomain".
