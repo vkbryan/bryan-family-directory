@@ -13,7 +13,8 @@ No personal details here: relatives are described generally.
    - Findings (Oct 27): the email records are correct (DKIM signed by Resend, DMARC passes). Likely causes: the domain was only 3 days old when she tried (Microsoft is hardest on new domains), the domain has no mailbox (no MX record), so replies can't be received, and the email is a bare code with little text.
    - Checked Resend → Emails: both codes "Delivered" within the same minute, nothing after, so Microsoft accepted them and filtered them out of sight (Resend isn't blocking the address). Resend's Insights pass every check except one suggestion: "Use a subdomain".
    - Before sending emailed invitations in bulk, send sign-in codes from a subdomain (e.g. `login.bryan-family.com`) so bulk mail can't drag down the codes' reputation.
-   - Set up hello@ forwarding to the admin's Gmail (adds MX records, which also helps deliverability).
+   - Done (Nov 2): hello@ forwards to the admin's Gmail through Squarespace (added MX records; root SPF now includes Mailgun). Resend records unchanged.
+   - Next: test with an Outlook.com address made for testing (inbox, Junk or missing?); if missing, file Microsoft's sender-support form.
    - Done: Hotmail/Outlook hint on the code screen; friendlier sign-in email text (in `docs/supabase-setup.md`, pasted into Supabase's templates).
    - Optional: admin-assisted sign-in code for relatives who can't receive email (needs the Supabase secret key kept only on the admin's Mac).
 3. **Reorganize and consolidate the home page** (it feels too busy)
@@ -30,11 +31,13 @@ No personal details here: relatives are described generally.
    - Tip for sending: put the reason and the link in one message, rather than waiting for "sure".
    - Expiry stays at 14 days for now (decided).
    - Done: invitation page trimmed, and the email box is on the invitation page itself (no hop to the sign-in page).
-5. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
+5. **Helping people through sign-in** (a relative replied to the code email instead of typing the code)
+   - Done: code screen says to keep the page open and type the code there; the site remembers a waiting code for an hour, so coming back opens straight at the code box.
+   - Maybe: reword the sign-in email to lead with "type this code on the page" and add a link back to the site.
+6. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up
 
-- Forward replies sent to hello@bryan-family.com to the admin's Gmail.
 - Retire the old Softr site and disconnect it from Airtable; keep the Airtable base as a read-only archive for a while. (Airtable warned the free API limit was near; that's Softr, not this site.)
 - Update the backup workflow's GitHub building blocks (Node 20 deprecation warning; `ubuntu-latest` moving to Ubuntu 26).
 - Swap in a full-size reunion photo if the original turns up (current one is 640px wide).
