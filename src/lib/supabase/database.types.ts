@@ -213,12 +213,12 @@ export type Database = {
           id: string
           kind: Database["public"]["Enums"]["invitation_kind"]
           max_uses: number | null
-          use_count: number
           profile_id: string | null
           recipient_label: string | null
           revoked_at: string | null
           revoked_by: string | null
           token_hash: string
+          use_count: number
         }
         Insert: {
           accepted_at?: string | null
@@ -229,12 +229,12 @@ export type Database = {
           id?: string
           kind: Database["public"]["Enums"]["invitation_kind"]
           max_uses?: number | null
-          use_count?: number
           profile_id?: string | null
           recipient_label?: string | null
           revoked_at?: string | null
           revoked_by?: string | null
           token_hash: string
+          use_count?: number
         }
         Update: {
           accepted_at?: string | null
@@ -245,12 +245,12 @@ export type Database = {
           id?: string
           kind?: Database["public"]["Enums"]["invitation_kind"]
           max_uses?: number | null
-          use_count?: number
           profile_id?: string | null
           recipient_label?: string | null
           revoked_at?: string | null
           revoked_by?: string | null
           token_hash?: string
+          use_count?: number
         }
         Relationships: [
           {
@@ -672,6 +672,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_group_link: {
+        Args: { p_label?: string; p_max_uses?: number }
+        Returns: string
+      }
       create_invitation: {
         Args: {
           p_kind: Database["public"]["Enums"]["invitation_kind"]
@@ -720,7 +724,6 @@ export type Database = {
           website: string
         }[]
       }
-      create_group_link: { Args: { p_label?: string; p_max_uses?: number }; Returns: string }
       ensure_hobby: { Args: { p_name: string }; Returns: string }
       grant_guardian: {
         Args: { p_account_id: string; p_profile_id: string; p_via: string }
