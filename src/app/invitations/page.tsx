@@ -31,6 +31,7 @@ async function InvitationsContent() {
     .from("invitations")
     .select("id, kind, recipient_label, created_at, expires_at, accepted_at, revoked_at")
     .eq("kind", "join")
+    .is("max_uses", null)
     .order("created_at", { ascending: false })
     .limit(20);
 

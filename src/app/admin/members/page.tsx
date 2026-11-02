@@ -33,7 +33,7 @@ async function MembersContent() {
     supabase.rpc("admin_accounts"),
     supabase
       .from("invitations")
-      .select("id, kind, recipient_label, created_by, created_at, expires_at, accepted_at, revoked_at, profile_id")
+      .select("id, kind, recipient_label, created_by, created_at, expires_at, accepted_at, revoked_at, profile_id, max_uses, use_count")
       .order("created_at", { ascending: false })
       .limit(50),
     supabase.from("profiles").select("id, full_name, account_id"),
@@ -106,8 +106,12 @@ async function MembersContent() {
         <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface px-4">
           {(invitations ?? []).map((inv) => {
             const status = invitationStatus(inv);
-            const kind = { join: "Join", claim: "Claim", co_guardian: "Co-parent" }[inv.kind];
-            const target = inv.profile_id ? nameById.get(inv.profile_id) : inv.recipient_label;
+            const kind = inv.max_uses ? "Group" : { join: "Join", claim: "Claim", co_guardian: "Co-parent" }[inv.kind];
+            const target = inv.profile_id
+              ? nameById.get(inv.profile_id)
+              : inv.max_uses
+                ? `${inv.recipient_label ?? "Group link"} (${inv.use_count} of ${inv.max_uses} joined)`
+                : inv.recipient_label;
             return (
               <li key={inv.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <span>

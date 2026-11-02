@@ -182,6 +182,7 @@ describe("invitation preview (shown before signing in)", () => {
     expect(await db.value("select public.invitation_preview($1)", [secret])).toEqual({
       status: "valid",
       kind: "join",
+      is_group: false,
       recipient_label: "Cousin Robin",
       inviter_name: "Inviter",
       profile_name: null,

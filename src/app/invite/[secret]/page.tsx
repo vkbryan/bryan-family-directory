@@ -23,8 +23,9 @@ export const metadata = {
 };
 
 type Preview = {
-  status: "valid" | "used" | "expired" | "revoked" | "invalid";
+  status: "valid" | "used" | "full" | "expired" | "revoked" | "invalid";
   kind?: "join" | "claim" | "co_guardian";
+  is_group?: boolean;
   recipient_label?: string | null;
   inviter_name?: string | null;
   profile_name?: string | null;
@@ -53,6 +54,7 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
   if (preview.status !== "valid") {
     const reason = {
       used: "This invitation has already been used.",
+      full: "So many relatives have joined with this link that it's full.",
       expired: "This invitation has expired.",
       revoked: "This invitation was cancelled.",
       invalid: "This invitation link isn't valid. It may have been copied incompletely.",
@@ -104,7 +106,11 @@ async function InviteContent({ params }: { params: Promise<{ secret: string }> }
         <p className="font-semibold text-green-text">{preview.member_count} relatives are already in the directory.</p>
       )}
       <Card className="flex flex-col gap-4">
-        {viewer.state === "member" && preview.kind === "join" ? (
+        {viewer.state === "member" && preview.is_group ? (
+          <p>
+            You&apos;re already in the directory. <Link href="/">Go to the directory</Link>.
+          </p>
+        ) : viewer.state === "member" && preview.kind === "join" ? (
           // Accepting would use up a newcomer's link without adding anyone.
           <p>
             This invitation is for someone new. You&apos;re already a member, so pass the link along to them.{" "}

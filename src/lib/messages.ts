@@ -6,6 +6,7 @@ const messages: Record<string, string> = {
   invitation_invalid: "This invitation link isn't valid. Ask the relative who invited you for a new one.",
   invitation_revoked: "This invitation was cancelled. Ask the relative who invited you for a new one.",
   invitation_already_used: "This invitation has already been used. Ask the relative who invited you for a new one.",
+  invitation_full: "So many relatives have joined with this link that it's full. Ask the relative who shared it for a new one.",
   invitation_expired: "This invitation has expired. Ask the relative who invited you for a new one.",
   already_has_profile: "You already have a profile in the directory.",
   profile_already_claimed: "Someone has already claimed this profile. Contact a family admin if that's a mistake.",

@@ -22,6 +22,7 @@ export async function PilotChecklist({ myAccountId }: { myAccountId: string }) {
         .from("invitations")
         .select("id, kind, recipient_label, profile_id, created_at, expires_at, accepted_at, accepted_by, revoked_at")
         .in("kind", ["join", "claim"])
+        .is("max_uses", null)
         .gte("created_at", since)
         .order("created_at", { ascending: false }),
       supabase.rpc("admin_accounts"),

@@ -23,12 +23,19 @@ export function formatDateTime(value: string) {
   });
 }
 
-type InvitationTimes = { expires_at: string; accepted_at: string | null; revoked_at: string | null };
+type InvitationTimes = {
+  expires_at: string;
+  accepted_at: string | null;
+  revoked_at: string | null;
+  max_uses?: number | null;
+  use_count?: number;
+};
 
-/** "Used", "Cancelled", "Expired" or "Waiting", as of now. */
+/** "Used", "Cancelled", "Full", "Expired" or "Waiting", as of now. */
 export function invitationStatus(inv: InvitationTimes) {
   if (inv.accepted_at) return "Used";
   if (inv.revoked_at) return "Cancelled";
+  if (inv.max_uses && (inv.use_count ?? 0) >= inv.max_uses) return "Full";
   return new Date(inv.expires_at).getTime() < Date.now() ? "Expired" : "Waiting";
 }
 
