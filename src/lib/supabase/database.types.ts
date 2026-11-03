@@ -630,6 +630,17 @@ export type Database = {
           requester_email: string
         }[]
       }
+      admin_contact_list: {
+        Args: never
+        Returns: {
+          answered_at: string
+          branch: string
+          city: string
+          email: string
+          full_name: string
+          state: string
+        }[]
+      }
       admin_set_account_role: {
         Args: {
           p_account_id: string
@@ -749,6 +760,14 @@ export type Database = {
         Args: { p_account_id: string; p_profile_id: string; p_via: string }
         Returns: undefined
       }
+      my_event_news: {
+        Args: never
+        Returns: {
+          email: string
+          sign_in_email: string
+          wants_news: boolean
+        }[]
+      }
       my_profile_id: { Args: never; Returns: string }
       pending_co_guardian_requests: {
         Args: { p_profile_id: string }
@@ -784,6 +803,10 @@ export type Database = {
       require_admin: { Args: never; Returns: undefined }
       revoke_invitation: {
         Args: { p_invitation_id: string }
+        Returns: undefined
+      }
+      set_event_news: {
+        Args: { p_email?: string; p_wants_news: boolean }
         Returns: undefined
       }
       slugify: { Args: { value: string }; Returns: string }

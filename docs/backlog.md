@@ -34,11 +34,15 @@ No personal details here: relatives are described generally.
 5. **Helping people through sign-in** (a relative replied to the code email instead of typing the code)
    - Done: code screen says to keep the page open and type the code there; the site remembers a waiting code for an hour, so coming back opens straight at the code box.
    - Maybe: reword the sign-in email to lead with "type this code on the page" and add a link back to the site.
-6. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
+6. **Contact list for family events** (built Nov 3)
+   - Done: members are asked once on the home page ("Send me news about family events?"), can change it on their own Edit profile page, and choose their sign-in email or another. Admin → Contact list shows everyone who said yes, with a spreadsheet (CSV) download. Deactivated members drop off.
+   - Later: relatives who haven't joined aren't on it; children's profiles never are.
+7. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.
 
 ## Waiting / clean-up
 
 - Retire the old Softr site and disconnect it from Airtable; keep the Airtable base as a read-only archive for a while. (Airtable warned the free API limit was near; that's Softr, not this site.)
+- Backup: Supabase sometimes adds its own tables before the CLI's practice copy has them; the practice restore now skips those with a warning (fixed Nov 3). Updating the CLI pin would make the warnings go away.
 - Update the backup workflow's GitHub building blocks (Node 20 deprecation warning; `ubuntu-latest` moving to Ubuntu 26).
 - Swap in a full-size reunion photo if the original turns up (current one is 640px wide).
 - Importer: reuse the website's state and interest tidying (`src/lib/places.ts`, `src/lib/interests.ts`) for any future CSV imports.

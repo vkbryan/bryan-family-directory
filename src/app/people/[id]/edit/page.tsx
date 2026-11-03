@@ -3,7 +3,10 @@ import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ageOn } from "@/lib/age";
+import { getMyEventNews } from "@/lib/event-news";
+import { EventNewsForm } from "@/components/event-news-form";
 import { Loading } from "@/components/ui";
+import { SectionCard } from "@/components/form-bits";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import {
   BasicsSection,
@@ -46,7 +49,7 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
   const isChild = p.profile_type === "child";
   const isMe = viewer.profile.id === p.id;
 
-  const [{ data: branches }, { data: allHobbies }, photo, guardians, requests, members, parentLinks, adults] = await Promise.all([
+  const [{ data: branches }, { data: allHobbies }, photo, guardians, requests, members, parentLinks, adults, eventNews] = await Promise.all([
     supabase.from("family_branches").select("id, name").order("sort_order").order("name"),
     supabase.from("hobbies").select("name").order("name"),
     p.photo_path ? supabase.storage.from("profile-photos").createSignedUrl(p.photo_path, 3600) : null,
@@ -61,6 +64,8 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
     isChild && viewer.isAdmin
       ? supabase.from("profiles").select("id, full_name").eq("profile_type", "adult").is("archived_at", null).order("full_name")
       : null,
+    // Event news belongs to the person signed in, so only on their own profile.
+    isMe ? getMyEventNews() : null,
   ]);
 
   const profile: EditableProfile = {
@@ -122,6 +127,11 @@ async function EditContent({ params }: { params: Promise<{ id: string }> }) {
       <BirthdaySection profile={profile} />
       <InterestsSection profile={profile} suggestions={(allHobbies ?? []).map((h) => h.name)} />
       {isChild ? <ChildContactNote profile={profile} /> : <ContactSection profile={profile} />}
+      {eventNews && (
+        <SectionCard title="Family events" description="Get news about reunions and other family events by email.">
+          <EventNewsForm news={eventNews} />
+        </SectionCard>
+      )}
       {isChild && (
         <GuardiansSection
           profileId={p.id}

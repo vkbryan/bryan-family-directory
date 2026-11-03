@@ -4,6 +4,7 @@ const links = [
   { href: "/admin", label: "Admin home" },
   { href: "/admin/group-link", label: "Group link" },
   { href: "/admin/members", label: "Members" },
+  { href: "/admin/contact-list", label: "Contact list" },
   { href: "/admin/requests", label: "Requests" },
   { href: "/admin/claims", label: "Claim links" },
   { href: "/admin/branches", label: "Branches" },

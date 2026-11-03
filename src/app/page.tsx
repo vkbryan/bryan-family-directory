@@ -10,6 +10,8 @@ import { filterHref, hasFilters, newestFirst, readFilters, tally, upcomingBirthd
 import { Avatar } from "@/components/avatar";
 import { PersonCard } from "@/components/person-card";
 import { YourProfileCard } from "@/components/your-profile-card";
+import { EventNewsForm } from "@/components/event-news-form";
+import { getMyEventNews } from "@/lib/event-news";
 import { branchColorClass } from "@/lib/branch-colors";
 import { Button, ButtonLink, Card, Loading } from "@/components/ui";
 import { signOut } from "./actions";
@@ -97,7 +99,7 @@ function StatusCard({ title, children }: { title: string; children: ReactNode })
 const NEWEST_COUNT = 12;
 
 async function Directory({ name }: { name: string }) {
-  const [everyone, allBranches] = await Promise.all([getDirectory(), getBranchNames()]);
+  const [everyone, allBranches, eventNews] = await Promise.all([getDirectory(), getBranchNames(), getMyEventNews()]);
   const branches = tally(everyone.flatMap((p) => p.branches));
   const places = tally(everyone.filter((p) => p.state).map((p) => ({ slug: p.state!, name: p.state! })));
   const birthdays = upcomingBirthdays(everyone, new Date());
@@ -115,6 +117,16 @@ async function Directory({ name }: { name: string }) {
       </div>
 
       {me && <YourProfileCard me={me} />}
+
+      {/* Asked once; afterwards it's on their profile's edit page. */}
+      {eventNews && eventNews.wantsNews === null && (
+        <section aria-labelledby="event-news-heading" className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <h2 id="event-news-heading" className="text-xl font-semibold">
+            One quick question
+          </h2>
+          <EventNewsForm news={eventNews} saveLabel="Save my answer" />
+        </section>
+      )}
 
       <Form action="/everyone" className="flex flex-col gap-1.5" role="search">
         <label htmlFor="q" className="sr-only">
