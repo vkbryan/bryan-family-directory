@@ -54,5 +54,6 @@ describe("family links", () => {
       db.run("insert into public.family_links (section, title, url) values ('history', 'Bad', 'javascript:alert(1)')"),
     ).rejects.toThrow(/check constraint/);
     await db.run("insert into public.family_links (section, title, url, icon) values ('stay_in_touch', 'Email us', 'mailto:hello@example.test', 'email')");
+    await db.run("insert into public.family_links (section, title, url, icon) values ('photos', 'Album', 'https://photos.example.test', 'photos')");
   });
 });

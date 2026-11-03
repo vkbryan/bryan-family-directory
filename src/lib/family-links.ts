@@ -2,6 +2,7 @@
 
 export const SECTIONS = [
   { value: "stay_in_touch", label: "Stay in touch" },
+  { value: "photos", label: "Photos" },
   { value: "history", label: "Our history" },
   { value: "get_involved", label: "Get involved" },
   { value: "past_events", label: "Past events" },
