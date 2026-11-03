@@ -15,7 +15,7 @@ export default function FamilyLinksPage() {
     <>
       <h1 className="text-3xl font-bold">Family links</h1>
       <p className="text-muted">
-        The links on the <Link href="/family">Family page</Link>: the WhatsApp chat, photos, family tree and anything else
+        The links on the <Link href="/family">Info page</Link>: the WhatsApp chat, photos, family tree and anything else
         the family shares. Only signed-in members see them. Changes show right away.
       </p>
       <Suspense fallback={<Loading />}>

@@ -25,7 +25,7 @@ No personal details here: relatives are described generally.
    - Done: "Shared interests" removed from the home page (still under Advanced search and on profiles); "More filters" renamed "Advanced search".
    - Done: menu bar under the banner (Home, My profile, + Invite, Admin, Sign out) replaces the bottom buttons and "← Back" links; breadcrumbs on the edit and add-a-child pages.
    - Done: "Everyone" page in the menu, with search, Advanced search and every tile; the home page shows the 12 newest profiles and a simple search box that opens Everyone; site footer.
-   - On phones the menu is two rows (Home, Everyone, Family, Me; then Invite, Admin, Sign out); "My profile" became "Me" (Nov 3).
+   - Menu (Nov 3): Home, Family (everyone), Me, Info (family links), + Invite, then Admin and Sign out. Pages keep their addresses (/everyone, /family).
 4. **Getting invitations opened** (5 sent, none joined yet; at least one wasn't even read in WhatsApp)
    - Done: link preview picture and warmer text; invitation page says "takes about a minute, just your name" and how many relatives are already in; friendlier ready-made text message.
    - Tip for sending: put the reason and the link in one message, rather than waiting for "sure".
@@ -38,7 +38,7 @@ No personal details here: relatives are described generally.
    - Done: members are asked once on the home page ("Send me news about family events?"), can change it on their own Edit profile page, and choose their sign-in email or another. Admin → Contact list shows everyone who said yes, with a spreadsheet (CSV) download. Deactivated members drop off.
    - Later: relatives who haven't joined aren't on it; children's profiles never are.
 7. **Family hub** (replacing the public 2025 reunion Linktree)
-   - Done (Nov 3): members-only Family page (Stay in touch, Our history, Get involved, Past events); Admin → Family links to add, edit, reorder, hide and delete. "My profile" in the menu is now "Me".
+   - Done (Nov 3): members-only Info page (Stay in touch, Our history, Get involved, Past events); Admin → Family links to add, edit, reorder, hide and delete. "My profile" in the menu is now "Me".
    - Next: add the real links (WhatsApp chat, photo album, family tree, brainstorm doc), then retire or privatize the Linktree.
    - Later: an Events page (next reunion with its key links on the home page), a family tree drawn from recorded parent links.
 8. **Finish the pilot:** collect feedback (what was confusing, did you find someone, what would bring you back), fix what tripped people up, then roll out the WhatsApp link.

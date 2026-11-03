@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { bySection, iconFor, LINK_COLUMNS, type FamilyLink } from "@/lib/family-links";
 import { Card, Loading } from "@/components/ui";
 
-export const metadata = { title: "Family · Bryan Family Directory" };
+export const metadata = { title: "Info · Bryan Family Directory" };
 
 /** The family's shared places: WhatsApp chat, photos, family tree, planning docs. Members only. */
 export default function FamilyPage() {
@@ -32,13 +32,13 @@ async function Family() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">Family</h1>
+        <h1 className="text-3xl font-bold">Info</h1>
         <p className="text-muted">Everything Bryan, in one place. Only signed-in family can see these links.</p>
       </div>
 
       {sections.length === 0 ? (
         <Card>
-          <p>Family links are on their way. {viewer.isAdmin ? "Add them under Admin → Family links." : "Check back soon."}</p>
+          <p>Links are on their way. {viewer.isAdmin ? "Add them under Admin → Family links." : "Check back soon."}</p>
         </Card>
       ) : (
         sections.map((section) => (

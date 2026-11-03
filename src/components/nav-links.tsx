@@ -7,7 +7,7 @@ import { signOut } from "@/app/actions";
 const link = "inline-flex min-h-11 items-center border-b-2 font-medium no-underline";
 
 /**
- * Home, Everyone, Family, Me (your profile), Invite (as a gold pill) and, for admins, Admin; Sign out
+ * Home, Family (everyone in the directory), Me (your profile), Info (family links), Invite (as a gold pill) and, for admins, Admin; Sign out
  * sits apart on the right. The page you're on is underlined.
  */
 export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmin: boolean }) {
@@ -15,9 +15,9 @@ export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmi
   const myProfile = `/people/${myProfileId}`;
   const items = [
     { href: "/", label: "Home", current: path === "/" },
-    { href: "/everyone", label: "Everyone", current: path === "/everyone" },
-    { href: "/family", label: "Family", current: path === "/family" },
+    { href: "/everyone", label: "Family", current: path === "/everyone" },
     { href: myProfile, label: "Me", current: path === myProfile || path.startsWith(`${myProfile}/`) || path === "/children/new" },
+    { href: "/family", label: "Info", current: path === "/family" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin", current: path.startsWith("/admin") }] : []),
   ];
 

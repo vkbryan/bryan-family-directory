@@ -8,7 +8,7 @@ import { PersonCard } from "@/components/person-card";
 import { Card, Loading } from "@/components/ui";
 import { DirectoryFilters } from "./directory-filters";
 
-export const metadata = { title: "Everyone · Bryan Family Directory" };
+export const metadata = { title: "Family · Bryan Family Directory" };
 
 /** The whole family: search and filters at the top, every tile below. */
 export default function EveryonePage({ searchParams }: PageProps<"/everyone">) {
@@ -39,7 +39,7 @@ async function Everyone({ searchParams }: { searchParams: PageProps<"/everyone">
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-3xl font-bold">Everyone</h1>
+      <h1 className="text-3xl font-bold">Family</h1>
 
       <DirectoryFilters
         key={JSON.stringify(filters)}
