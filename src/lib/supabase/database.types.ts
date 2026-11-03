@@ -124,6 +124,53 @@ export type Database = {
         }
         Relationships: []
       }
+      family_links: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          hidden: boolean
+          icon: string
+          id: string
+          note: string | null
+          section: string
+          sort_order: number
+          title: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          hidden?: boolean
+          icon?: string
+          id?: string
+          note?: string | null
+          section: string
+          sort_order?: number
+          title: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          hidden?: boolean
+          icon?: string
+          id?: string
+          note?: string | null
+          section?: string
+          sort_order?: number
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_links_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_relationships: {
         Row: {
           created_at: string
