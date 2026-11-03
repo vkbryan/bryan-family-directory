@@ -12,10 +12,30 @@ DIR="${1:?usage: verify-restore.sh <backup dir>}"
 # own tables (storage, auth) can only be emptied by it.
 LOCAL="postgresql://supabase_admin:postgres@127.0.0.1:54322/postgres"
 
+# Supabase sometimes adds tables of its own (storage, auth, ...) to the live
+# project before the CLI's throwaway copy has them. Leave those out of the
+# practice load, with a warning. A missing table of ours (public, private)
+# still fails the run.
+existing=$(mktemp)
+psql "$LOCAL" -At -c "select schemaname || '.' || tablename from pg_tables" > "$existing"
+awk -v skipped=/dev/stderr '
+  NR == FNR { have[$0] = 1; next }
+  /^COPY / {
+    name = $2; gsub(/"/, "", name); split(name, part, ".")
+    if (!(name in have) && part[1] != "public" && part[1] != "private") {
+      print "⚠️  Not in the practice copy, left out: " name > skipped
+      skipping = 1; next
+    }
+  }
+  skipping { if ($0 == "\\.") skipping = 0; next }
+  { print }
+' "$existing" "$DIR/data.sql" > "$DIR/data-for-practice.sql"
+rm -f "$existing"
+
 # Empty every table the backup has rows for (triggers off, so the append-only
 # audit log can be cleared in this throwaway copy), then load the data.
 # A COPY block whose next line is "\." has no rows, so it's skipped.
-tables=$(awk '/^COPY /{ name=$2; getline next_line; if (next_line != "\\.") print name }' "$DIR/data.sql" | sed 's/"//g' | sort -u)
+tables=$(awk '/^COPY /{ name=$2; getline next_line; if (next_line != "\\.") print name }' "$DIR/data-for-practice.sql" | sed 's/"//g' | sort -u)
 {
   echo "SET session_replication_role = replica;"
   for t in $tables; do echo "TRUNCATE $t CASCADE;"; done
@@ -23,7 +43,8 @@ tables=$(awk '/^COPY /{ name=$2; getline next_line; if (next_line != "\\.") prin
 
 psql "$LOCAL" -v ON_ERROR_STOP=1 -q \
   -c "SET session_replication_role = replica" \
-  -f "$DIR/data.sql"
+  -f "$DIR/data-for-practice.sql"
+rm -f "$DIR/data-for-practice.sql"
 
 restored=$(psql "$LOCAL" -At -f scripts/backup/counts.sql)
 live=$(cat "$DIR/live-counts.txt")

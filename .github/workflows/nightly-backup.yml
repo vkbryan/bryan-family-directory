@@ -63,6 +63,7 @@ jobs:
           supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/data.sql --use-copy --data-only
 
       - name: Save the photos
+        id: photos
         run: supabase storage cp -r ss:///profile-photos backup/photos --project-ref "$PROJECT_REF" --experimental
 
       - name: Practice restore into a throwaway database
@@ -71,8 +72,12 @@ jobs:
           scripts/backup/verify-restore.sh backup
           supabase stop --no-backup
 
+      # The backup is kept even if the practice restore failed: a saved copy
+      # is better than none, and the red ✕ still flags the problem.
       - name: Encrypt
+        if: ${{ !cancelled() && steps.photos.outcome == 'success' }}
         run: |
+          rm -f backup/data-for-practice.sql
           stamp=$(date -u +%Y-%m-%d)
           tar -czf - backup | gpg --batch --yes --symmetric --cipher-algo AES256 \
             --passphrase-fd 3 3<<<"$BACKUP_PASSPHRASE" -o "family-directory-backup-$stamp.tar.gz.gpg"
@@ -80,6 +85,7 @@ jobs:
           echo "STAMP=$stamp" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && steps.photos.outcome == 'success' }}
         with:
           name: family-directory-backup-${{ env.STAMP }}
           path: family-directory-backup-*.tar.gz.gpg
