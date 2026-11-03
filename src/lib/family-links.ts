@@ -1,4 +1,4 @@
-// Sections and icons for the Info page (/family). The database accepts only these.
+// Sections and icons for the Info page (/info). The database accepts only these.
 
 export const SECTIONS = [
   { value: "stay_in_touch", label: "Stay in touch" },

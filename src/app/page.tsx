@@ -46,9 +46,9 @@ async function HomeContent({ searchParams }: { searchParams: PageProps<"/">["sea
         </StatusCard>
       );
     case "member": {
-      // Searches used to live here; old links now open the Everyone page.
+      // Searches used to live here; old links now open the Family page.
       const params = await searchParams;
-      if (hasFilters(readFilters(params))) redirect(`/everyone?${new URLSearchParams(params as Record<string, string>)}`);
+      if (hasFilters(readFilters(params))) redirect(`/family?${new URLSearchParams(params as Record<string, string>)}`);
       return <Directory name={greetingName(viewer.profile)} />;
     }
   }
@@ -128,7 +128,7 @@ async function Directory({ name }: { name: string }) {
         </section>
       )}
 
-      <Form action="/everyone" className="flex flex-col gap-1.5" role="search">
+      <Form action="/family" className="flex flex-col gap-1.5" role="search">
         <label htmlFor="q" className="sr-only">
           Search by name or nickname
         </label>
@@ -185,7 +185,7 @@ async function Directory({ name }: { name: string }) {
 
       <section aria-labelledby="newest-heading" className="flex flex-col gap-4">
         <h2 id="newest-heading" className="text-xl font-semibold">
-          <Link href="/everyone">Family ›</Link>
+          <Link href="/family">Family ›</Link>
         </h2>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {newest.map((person) => (
@@ -195,7 +195,7 @@ async function Directory({ name }: { name: string }) {
           ))}
         </ul>
         {everyone.length > newest.length && (
-          <ButtonLink href="/everyone" variant="secondary">
+          <ButtonLink href="/family" variant="secondary">
             See all {everyone.length}
           </ButtonLink>
         )}

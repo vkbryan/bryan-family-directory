@@ -69,8 +69,8 @@ describe("searching and filtering", () => {
   });
 
   test("filter links keep the other filters", () => {
-    expect(filterHref({ ...none, branch: "branch-a" }, { hobby: "gardening" })).toBe("/everyone?branch=branch-a&hobby=gardening");
-    expect(filterHref({ ...none, branch: "branch-a" }, { branch: "" })).toBe("/everyone");
+    expect(filterHref({ ...none, branch: "branch-a" }, { hobby: "gardening" })).toBe("/family?branch=branch-a&hobby=gardening");
+    expect(filterHref({ ...none, branch: "branch-a" }, { branch: "" })).toBe("/family");
   });
 
   test("counts for browsing, most common first", () => {

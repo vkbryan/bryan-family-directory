@@ -15,9 +15,9 @@ export function NavLinks({ myProfileId, isAdmin }: { myProfileId: string; isAdmi
   const myProfile = `/people/${myProfileId}`;
   const items = [
     { href: "/", label: "Home", current: path === "/" },
-    { href: "/everyone", label: "Family", current: path === "/everyone" },
+    { href: "/family", label: "Family", current: path === "/family" },
     { href: myProfile, label: "Me", current: path === myProfile || path.startsWith(`${myProfile}/`) || path === "/children/new" },
-    { href: "/family", label: "Info", current: path === "/family" },
+    { href: "/info", label: "Info", current: path === "/info" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin", current: path.startsWith("/admin") }] : []),
   ];
 

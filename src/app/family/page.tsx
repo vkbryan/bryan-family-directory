@@ -1,78 +1,82 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getViewer } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
-import { bySection, iconFor, LINK_COLUMNS, type FamilyLink } from "@/lib/family-links";
+import { getBranchNames, getDirectory } from "@/lib/directory";
+import { filterPeople, hasFilters, readFilters, tally, type Filters } from "@/lib/directory-logic";
+import { PersonCard } from "@/components/person-card";
 import { Card, Loading } from "@/components/ui";
+import { DirectoryFilters } from "./directory-filters";
 
-export const metadata = { title: "Info · Bryan Family Directory" };
+export const metadata = { title: "Family · Bryan Family Directory" };
 
-/** The family's shared places: WhatsApp chat, photos, family tree, planning docs. Members only. */
-export default function FamilyPage() {
+/** The whole family: search and filters at the top, every tile below. */
+export default function FamilyPage({ searchParams }: PageProps<"/family">) {
   return (
     <Suspense fallback={<Loading />}>
-      <Family />
+      <Family searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function Family() {
+async function Family({ searchParams }: { searchParams: PageProps<"/family">["searchParams"] }) {
   const viewer = await getViewer();
   if (viewer.state !== "member") redirect("/");
 
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("family_links")
-    .select(LINK_COLUMNS)
-    .eq("hidden", false)
-    .order("sort_order")
-    .order("created_at");
-  const sections = bySection((data ?? []) as FamilyLink[]);
+  const filters = readFilters(await searchParams);
+  const [everyone, allBranches] = await Promise.all([getDirectory(), getBranchNames()]);
+  const results = filterPeople(everyone, filters);
+  const filtering = hasFilters(filters);
+
+  // Options for the filters, from what this viewer can see.
+  const states = [...new Set(everyone.map((p) => p.state).filter(Boolean))].sort() as string[];
+  const cities = [
+    ...new Set(
+      everyone.filter((p) => p.city && (!filters.state || p.state === filters.state)).map((p) => p.city),
+    ),
+  ].sort() as string[];
+  const hobbies = tally(everyone.flatMap((p) => p.hobbies));
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">Info</h1>
-        <p className="text-muted">Everything Bryan, in one place. Only signed-in family can see these links.</p>
-      </div>
+      <h1 className="text-3xl font-bold">Family</h1>
 
-      {sections.length === 0 ? (
-        <Card>
-          <p>Links are on their way. {viewer.isAdmin ? "Add them under Admin → Family links." : "Check back soon."}</p>
-        </Card>
-      ) : (
-        sections.map((section) => (
-          <section key={section.value} aria-labelledby={`section-${section.value}`} className="flex flex-col gap-3">
-            <h2 id={`section-${section.value}`} className="text-xl font-semibold">
-              {section.label}
-            </h2>
-            <ul className="flex flex-col gap-3">
-              {section.links.map((link) => (
-                <li key={link.id}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-h-16 items-center gap-4 rounded-xl border border-border bg-surface p-4 text-foreground no-underline hover:border-accent"
-                  >
-                    <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gold-soft text-2xl">
-                      {iconFor(link.icon)}
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="text-lg font-semibold leading-snug">{link.title}</span>
-                      {link.note && <span className="text-sm text-muted">{link.note}</span>}
-                    </span>
-                    <span aria-hidden="true" className="text-xl text-accent">
-                      ›
-                    </span>
-                    <span className="sr-only">(opens in a new tab)</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))
-      )}
+      <DirectoryFilters
+        key={JSON.stringify(filters)}
+        filters={filters}
+        branches={allBranches.map((b) => ({ value: b.slug, label: b.name }))}
+        states={states.map((s) => ({ value: s, label: s }))}
+        cities={cities.map((c) => ({ value: c, label: c }))}
+        hobbies={hobbies.map((h) => ({ value: h.slug, label: h.name }))}
+      />
+
+      <section aria-labelledby="results-heading" className="flex flex-col gap-4">
+        {/* Screen readers still hear a heading when nothing is filtered. */}
+        <h2 id="results-heading" className={filtering ? "text-xl font-semibold" : "sr-only"} aria-live="polite">
+          {filtering ? resultsLabel(results.length, filters, allBranches) : "All family members"}
+        </h2>
+        {results.length === 0 ? (
+          <Card>
+            <p>
+              Nobody matches yet. Try fewer filters, or <Link href="/family">see everyone</Link>.
+            </p>
+          </Card>
+        ) : (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {results.map((person) => (
+              <li key={person.id}>
+                <PersonCard person={person} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
+}
+
+function resultsLabel(count: number, filters: Filters, branches: { slug: string; name: string }[]) {
+  const branch = branches.find((b) => b.slug === filters.branch)?.name;
+  const base = `${count} ${count === 1 ? "match" : "matches"}`;
+  return branch ? `${base} in ${branch}` : base;
 }

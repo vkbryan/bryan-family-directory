@@ -158,7 +158,7 @@ export function filterHref(current: Filters, change: Partial<Filters>) {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(next)) if (value) params.set(key, value);
   const query = params.toString();
-  return query ? `/everyone?${query}` : "/everyone";
+  return query ? `/family?${query}` : "/family";
 }
 
 /** A safe link for a personal website (only http/https). */
