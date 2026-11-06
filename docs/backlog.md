@@ -47,7 +47,7 @@ No personal details here: relatives are described generally.
 
 - Retire the old Softr site and disconnect it from Airtable; keep the Airtable base as a read-only archive for a while. (Airtable warned the free API limit was near; that's Softr, not this site.)
 - Backup: Supabase sometimes adds its own tables before the CLI's practice copy has them; the practice restore now skips those with a warning (fixed Nov 3). Updating the CLI pin would make the warnings go away.
-- Update the backup workflow's GitHub building blocks (Node 20 deprecation warning; `ubuntu-latest` moving to Ubuntu 26).
+- Update the backup workflow's GitHub building blocks (now in vkbryan/family-directory-backups) (Node 20 deprecation warning; `ubuntu-latest` moving to Ubuntu 26).
 - Swap in a full-size reunion photo if the original turns up (current one is 640px wide).
 - Importer: reuse the website's state and interest tidying (`src/lib/places.ts`, `src/lib/interests.ts`) for any future CSV imports.
 - Add a second admin (and maybe a "branch captain" per branch) so approvals don't all wait on one person.
